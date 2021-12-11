@@ -1,0 +1,61 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "InstantiateMsg",
+  "type": "object",
+  "required": [
+    "admin",
+    "denom",
+    "max_issuance",
+    "merkle_root",
+    "name",
+    "open_mint_time",
+    "price",
+    "symbol",
+    "token_uri",
+    "whitelist_mint_time"
+  ],
+  "properties": {
+    "admin": {
+      "description": "The admin can update the contract and withdraw funds",
+      "type": "string"
+    },
+    "denom": {
+      "type": "string"
+    },
+    "max_issuance": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "merkle_root": {
+      "type": "string"
+    },
+    "name": {
+      "description": "Name of the NFT contract",
+      "type": "string"
+    },
+    "open_mint_time": {
+      "description": "Open Mint Time Unix Timestamp",
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "price": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    },
+    "symbol": {
+      "description": "Symbol of the NFT contract",
+      "type": "string"
+    },
+    "token_uri": {
+      "type": "string"
+    },
+    "whitelist_mint_time": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0.0
+    }
+  }
+}
