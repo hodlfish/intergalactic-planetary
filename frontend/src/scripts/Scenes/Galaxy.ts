@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import galaxyShader from '../Shaders/galaxyShader';
+import galaxyShader from '../shaders/GalaxyShader';
 import GalacticSpec from 'scripts/GalacticSpec';
 import GameObject from 'scripts/engine/GameObject';
 import { CursorTypes, LayerDefinitions, UpdateState } from 'scripts/engine/Engine';
-import Background from 'scripts/Objects/Background';
-import BlackHole from '../Objects/BlackHole';
-import GalaxyFog from '../Objects/GalaxyFog';
+import Background from 'scripts/objects/Background';
+import BlackHole from '../objects/BlackHole';
+import GalaxyFog from '../objects/GalaxyFog';
 import MapCamera from 'scripts/cameras/MapCamera';
 
 class GalaxyScene extends GameObject {

@@ -1,6 +1,6 @@
 import { LayerDefinitions } from 'scripts/engine/Engine';
-import starShader from 'scripts/Shaders/starShader';
-import atmosphereShader from 'scripts/Shaders/Planet/atmosphereShader';
+import starShader from 'scripts/shaders/StarShader';
+import atmosphereShader from 'scripts/shaders/geoPlanet/AtmosphereShader';
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/GameObject';
 

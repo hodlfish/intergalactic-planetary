@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import terrainShader from 'scripts/Shaders/Planet/terrainShader';
+import terrainShader from 'scripts/shaders/geoPlanet/TerrainShader';
 import { HEIGHT_RANGE, MIN_HEIGHT, UNIQUE_VERTICES, COLOR_PALETTE_SIZE } from './Settings';
 import { lerp } from 'three/src/math/MathUtils';
 import ColorPalette from '../ColorPalette';
-import { base64ToBinary, binaryToBase64 } from 'scripts/base64';
+import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
 import Engine, { LayerDefinitions } from 'scripts/engine/Engine';
 import { CallbackSet } from 'scripts/engine/Helpers';
 

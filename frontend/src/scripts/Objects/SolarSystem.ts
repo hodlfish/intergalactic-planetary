@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/GameObject';
-import Planet from 'scripts/Objects/IcoPlanet';
-import Templates from 'scripts/Objects/IcoPlanet/Templates';
+import Planet from 'scripts/objects/IcoPlanet';
+import Templates from 'scripts/objects/geoPlanet/Templates';
 import GalacticSpec from 'scripts/GalacticSpec';
 import { PlanetInfo } from 'scripts/Api';
-import OrbitPath from '../Objects/OrbitPath';
-import Star from '../Objects/Star';
+import OrbitPath from '../objects/OrbitPath';
+import Star from '../objects/Star';
 
 interface PlanetData {
     planet: Planet,

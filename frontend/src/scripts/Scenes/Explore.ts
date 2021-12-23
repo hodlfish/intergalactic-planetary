@@ -1,10 +1,10 @@
 import GameObject from 'scripts/engine/GameObject';
-import Background from 'scripts/Objects/Background';
-import PlayerShip from 'scripts/Objects/PlayerShip';
+import Background from 'scripts/objects/Background';
+import PlayerShip from 'scripts/objects/PlayerShip';
 import GalacticSpec from 'scripts/GalacticSpec';
 import { getPlanets } from 'scripts/Api';
-import SolarSystem from 'scripts/Objects/SolarSystem';
-import SphereBounds from 'scripts/Objects/SphereBounds';
+import SolarSystem from 'scripts/objects/SolarSystem';
+import SphereBounds from 'scripts/objects/SphereBounds';
 
 class ExploreScene extends GameObject {
     background: Background;

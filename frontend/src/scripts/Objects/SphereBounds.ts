@@ -1,5 +1,5 @@
 import GameObject from 'scripts/engine/GameObject';
-import sphereBoundsShader from 'scripts/Shaders/sphereBoundsShader';
+import sphereBoundsShader from 'scripts/shaders/SphereBoundsShader';
 import * as THREE from 'three';
 
 class SphereBounds extends GameObject {

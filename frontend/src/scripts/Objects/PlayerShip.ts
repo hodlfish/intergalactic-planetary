@@ -1,6 +1,6 @@
 import Engine, { LayerDefinitions, UpdateState } from 'scripts/engine/Engine';
 import * as THREE from 'three';
-import spaceAssetShader from 'scripts/Shaders/spaceAssetShader';
+import spaceAssetShader from 'scripts/shaders/SpaceAssetShader';
 import GameObject from 'scripts/engine/GameObject';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
 import IcoPlanet from './IcoPlanet';

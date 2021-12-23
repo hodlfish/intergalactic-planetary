@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import atmosphereShader from 'scripts/Shaders/Planet/atmosphereShader';
-import { base64ToBinary, binaryToBase64 } from 'scripts/base64';
+import atmosphereShader from 'scripts/shaders/geoPlanet/AtmosphereShader';
+import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
 import {
     deserializeColor, serializeColor,
     ATMOSPHERE_MIN_HEIGHT, ATMOSPHERE_HEIGHT_RANGE

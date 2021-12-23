@@ -1,6 +1,6 @@
 import { CallbackSet } from 'scripts/engine/Helpers';
 import * as THREE from 'three';
-import { COLOR_PALETTE_SIZE, SERIALIZED_COLOR_SIZE, deserializeColor, serializeColor } from './IcoPlanet/Settings';
+import { COLOR_PALETTE_SIZE, SERIALIZED_COLOR_SIZE, deserializeColor, serializeColor } from './geoPlanet/Settings';
 
 class ColorPalette {
     _colors: THREE.Color[];

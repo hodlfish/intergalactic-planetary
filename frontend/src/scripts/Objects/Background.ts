@@ -1,5 +1,5 @@
 import { LayerDefinitions } from 'scripts/engine/Engine';
-import backgroundShader from 'scripts/Shaders/backgroundShader';
+import backgroundShader from 'scripts/shaders/BackgroundShader';
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/GameObject';
 

@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { base64ToBinary, binaryToBase64 } from 'scripts/base64';
+import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
 
 export const MIN_HEIGHT = 1.0;
 export const MAX_HEIGHT = 3.0;

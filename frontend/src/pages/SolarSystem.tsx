@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import SolarSystem from "scripts/Scenes/SolarSystem";
+import SolarSystem from "scripts/scenes/SolarSystem";
 import { useNavigate, useLocation, useParams } from "react-router";
 import GalacticSpec from "scripts/GalacticSpec";
 import { pushNotification, useGlobalState, getGlobalState } from "hooks/useGlobalState";

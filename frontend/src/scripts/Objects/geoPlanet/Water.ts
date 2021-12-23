@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import waterShader from 'scripts/Shaders/Planet/waterShader';
-import { base64ToBinary, binaryToBase64 } from 'scripts/base64';
+import waterShader from 'scripts/shaders/geoPlanet/WaterShader';
+import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
 import {
     MIN_HEIGHT, HEIGHT_RANGE, deserializeColor, serializeColor
 } from './Settings';

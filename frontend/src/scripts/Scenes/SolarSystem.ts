@@ -1,11 +1,11 @@
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/GameObject';
-import Background from 'scripts/Objects/Background';
+import Background from 'scripts/objects/Background';
 import GalacticSpec from 'scripts/GalacticSpec';
 import { getPlanets } from 'scripts/Api';
 import { CursorTypes, UpdateState } from 'scripts/engine/Engine';
 import TargetCamera from 'scripts/cameras/TargetCamera';
-import SolarSystem from 'scripts/Objects/SolarSystem';
+import SolarSystem from 'scripts/objects/SolarSystem';
 
 class SolarSystemScene extends GameObject {
     static SYSTEM_RADIUS = 30.0;

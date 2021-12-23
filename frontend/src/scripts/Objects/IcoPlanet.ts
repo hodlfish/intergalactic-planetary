@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import { Terrain } from './IcoPlanet/Terrain';
+import { Terrain } from './geoPlanet/Terrain';
 import ColorPalette from './ColorPalette';
-import Scenery from './IcoPlanet/Scenery';
-import Atmosphere from './IcoPlanet/Atmosphere';
-import Water from './IcoPlanet/Water';
+import Scenery from './geoPlanet/Scenery';
+import Atmosphere from './geoPlanet/Atmosphere';
+import Water from './geoPlanet/Water';
 import GameObject from 'scripts/engine/GameObject';
 import { UpdateState } from 'scripts/engine/Engine';
-import { verifyBase64 } from 'scripts/base64';
+import { verifyBase64 } from 'scripts/Base64';
 
 class IcoPlanet extends GameObject {
     scenery: Scenery;

@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import ExploreScene from "scripts/Scenes/Explore";
+import ExploreScene from "scripts/scenes/Explore";
 import { isMobile } from 'react-device-detect';
 import { useNavigate, useParams } from "react-router";
 import Engine from "scripts/engine/Engine";

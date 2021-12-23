@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { getUpdateTransaction, pollTransaction, TransactionDetails } from 'scripts/Api';
 import Modal from './Modal';
 import Loading from 'components/Loading';
-import PlanetEditor from 'scripts/Scenes/PlanetEditor';
+import PlanetEditor from 'scripts/scenes/PlanetEditor';
 import Settings from 'scripts/Settings';
 
 interface SaveModalProps {

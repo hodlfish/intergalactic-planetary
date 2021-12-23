@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { base64ToBinary, binaryToBase64 } from 'scripts/base64';
-import sceneryShader from 'scripts/Shaders/Planet/sceneryShader';
+import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
+import sceneryShader from 'scripts/shaders/geoPlanet/SceneryShader';
 import ColorPalette from '../ColorPalette';
 import { Terrain } from './Terrain';
 import Engine, { LayerDefinitions } from 'scripts/engine/Engine';

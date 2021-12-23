@@ -1,5 +1,5 @@
 import { LayerDefinitions } from 'scripts/engine/Engine';
-import orbitPathShader from 'scripts/Shaders/orbitPathShader';
+import orbitPathShader from 'scripts/shaders/OrbitPathShader';
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/GameObject';
 

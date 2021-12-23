@@ -1,6 +1,6 @@
 import { getGlobalState, useGlobalState } from "hooks/useGlobalState";
 import { useRef, useEffect, useState } from "react";
-import Galaxy from "scripts/Scenes/Galaxy";
+import Galaxy from "scripts/scenes/Galaxy";
 import GalacticSpec from "scripts/GalacticSpec";
 import Engine from 'scripts/engine/Engine';
 import { useNavigate, useLocation } from 'react-router';

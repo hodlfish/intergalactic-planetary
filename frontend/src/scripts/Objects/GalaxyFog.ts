@@ -1,5 +1,5 @@
 import { LayerDefinitions } from 'scripts/engine/Engine';
-import galaxyFogShader from 'scripts/Shaders/galaxyFogShader';
+import galaxyFogShader from 'scripts/shaders/GalaxyFogShader';
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/GameObject';
 

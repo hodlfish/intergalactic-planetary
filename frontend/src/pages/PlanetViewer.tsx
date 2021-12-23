@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { pushNotification, useGlobalState } from 'hooks/useGlobalState';
 import Toolbar from './PlanetToolbar';
-import PlanetEditor from 'scripts/Scenes/PlanetEditor';
+import PlanetEditor from 'scripts/scenes/PlanetEditor';
 import GalacticSpec from 'scripts/GalacticSpec';
 import { useNavigate, useLocation, useParams } from 'react-router';
 import ConfirmationModal from 'components/modals/ConfirmationModal';
