@@ -1,0 +1,29 @@
+#popup-component {
+    @include display-panel;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    z-index: 5;
+
+    .notification {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        height: 40px;
+        cursor: pointer;
+
+        .icon {
+            width: 32px;
+            height: 32px;
+            margin: auto;
+            stroke: white;
+        }
+
+        .message {
+            margin: auto;
+        }
+    }
+}
+
+#popup-component.hidden {
+    display: none;
+}

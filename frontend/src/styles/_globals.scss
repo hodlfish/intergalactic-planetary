@@ -1,0 +1,237 @@
+@mixin bottom-panel {
+    position: absolute;
+    display: grid;
+    padding: 20px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+@mixin display-panel {
+    position: relative;
+    padding: 6px;
+    display: grid;
+    margin: auto;
+    color: white;
+    border-radius: 12px;
+    pointer-events: all;
+    background-color: $bg-1;
+    box-shadow: 0px 0px 8px 4px $bg1-shadow;
+}
+
+@mixin display-panel-selectable {
+    @include display-panel;
+    cursor: pointer;
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            font-weight: bold;
+            background-color: white;
+            color: black;
+            stroke: black;
+        }
+    }
+}
+
+@mixin no-select {
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -khtml-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+    -webkit-tap-highlight-color: transparent;
+}
+
+body {
+    @include no-select;
+    touch-action: none;
+}
+
+canvas {
+    @include no-select;
+}
+
+.circle-button {
+    border-radius: 30px;
+    height: 60px;
+    width: 60px;
+    background: $bg-1;
+    box-shadow: 0px 0px 8px 4px $bg1-shadow;
+    display: grid;
+    stroke: white;
+    cursor: pointer;
+
+    svg {
+        width: 40px;
+        height: 40px;
+        margin: auto;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            stroke: black;
+            background: white;
+        }
+    }
+}
+
+#header {
+    position: absolute;
+    display: grid;
+    padding: 10px 20px;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    pointer-events: none;
+
+    #title-container {
+        display: grid;
+        text-align: center;
+        min-height: 50px;
+        
+        div {
+            max-width: calc(100% - 150px);
+            margin: auto auto;
+            font-size: 24px;
+            opacity: 0.5;
+        }
+    }
+}
+
+#footer {
+    position: absolute;
+    display: grid;
+    padding: 20px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    pointer-events: none;
+
+    #info-panel {
+        @include display-panel;
+
+        #title {
+            text-align: center;
+            margin: 10px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #title-button {
+            @include display-panel;
+            display: grid;
+            grid-template-columns: 60px 1fr;
+            margin: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            min-height: 50px;
+            cursor: pointer;
+
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    background: white;
+                    color: $bg-1;
+                    svg {
+                        stroke: $bg-1;
+                    }
+                }
+            }
+
+            div {
+                margin: auto 10px;
+            }
+
+            svg {
+                width: 40px;
+                height: 40px;
+                margin: auto;
+                stroke: white;
+            }
+        }
+
+        #button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    }
+}
+
+#button-panel {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    display: flex;
+    flex-direction: column;
+
+    .circle-button {
+        margin: 10px;
+    }
+}
+
+.menu-option {
+    @include display-panel;
+    display: grid;
+    grid-template-rows: 1fr 16px;
+    width: 50px;
+    height: 50px;
+    margin: 8px;
+    text-align: center;
+    stroke: white;
+
+    svg {
+        width: 32px;
+        height: 32px;
+        margin: auto;
+    }
+}
+
+.menu-option.selectable {
+    cursor: pointer;
+    @media (hover: hover) and (pointer: fine) {
+        &:hover {
+            font-weight: bold;
+            background-color: white;
+            color: black;
+            stroke: black;
+        }
+    }
+}
+
+input[type="color"] {
+	-webkit-appearance: none;
+	border: none;
+	width: 32px;
+	height: 32px;
+  cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+	padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+	border: none;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: $bg1-shadow;
+    border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: $bg1-shadow;
+}

@@ -1,0 +1,23 @@
+#loading-component {
+    display: grid;
+    margin: auto;
+    width: 120px;
+    height: 120px;
+
+    svg {
+        stroke: white;
+        width: 64px;
+        height: 64px;
+        margin: auto;
+        animation: loading-animation 1s infinite ease-in-out;
+    }
+
+    @keyframes loading-animation {
+        0%   {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+}

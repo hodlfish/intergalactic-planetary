@@ -1,0 +1,76 @@
+#wallet-component {
+    @include display-panel;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    height: 40px;
+    stroke: white;
+    width: 215px;
+    margin: 10px auto;
+
+    #disconnect-icon {
+        width: 32px;
+        height: 32px;
+        margin: auto;
+    }
+
+    #wallet-icon {
+        width: 28px;
+        height: 28px;
+        margin: auto;
+        stroke: $icon-primary;
+    }
+
+    #connect {
+        cursor: pointer;
+        line-height: 40px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .connect-button {
+        @include display-panel;
+        @include no-select;
+        cursor: pointer;
+        width: 240px;
+        height: 40px;
+        margin: 10px;
+        display: grid;
+
+        div {
+            margin: auto;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                background: white;
+                color: black;
+            }
+        }
+    }
+
+    #wallet-info {
+        display: grid;
+        grid-template-columns: 1fr 40px;
+
+        #address {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            text-align: center;
+            line-height: 40px;
+        }
+    
+        svg {
+            width: 24px;
+            height: 24px;
+            stroke: $icon-primary;
+            cursor: pointer;
+            margin: auto;
+
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    stroke: gray;
+                }
+            }
+        }
+    }
+}

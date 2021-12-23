@@ -1,0 +1,114 @@
+#menu-component {
+    position: absolute;
+    margin: 10px;
+    max-width: 260px;
+    z-index: 1;
+
+    .hidden {
+        display: none !important;
+    }
+
+    #menu-closed {
+        border-radius: 30px;
+        height: 60px;
+        width: 60px;
+        background: $bg-1;
+        box-shadow: 0px 0px 8px 4px $bg1-shadow;
+        display: grid;
+        stroke: white;
+        cursor: pointer;
+    
+        svg {
+            width: 40px;
+            height: 40px;
+            margin: auto;
+        }
+        @media (hover: hover) and (pointer: fine) {
+            &:hover {
+                stroke: black;
+                background: white;
+            }
+        }
+    }
+
+    #menu-open {
+        @include display-panel;
+        grid-template-rows: 60px 1fr;
+        max-height: calc(100vh - 40px);
+
+        #menu-header {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+
+            #icon {
+                margin: 4px;
+                width: 40px;
+                height: 40px;
+                stroke: white;
+                cursor: pointer;
+            }
+
+            #title {
+                text-align: center;
+                font-size: 22px;
+            }
+        }
+
+        #menu-content {
+            overflow: auto;
+
+            .navigation-link {
+                @include display-panel;
+                display: grid;
+                grid-template-columns: 40px 1fr;
+                height: 40px;
+                cursor: pointer;
+                margin: 10px;
+                stroke: white;
+    
+                svg {
+                    width: 32px;
+                    height: 32px;
+                    margin: auto;
+                }
+    
+                div {
+                    margin: auto;
+                    font-size: 18px;
+                }
+            }
+    
+            .navigation-link.selectable {
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background-color: white;
+                        color: black;
+                        stroke: black;
+                    }
+                }
+            }
+    
+            .section-header {
+                font-size: 18px;
+                text-align: center;
+                margin: 12px 0px 6px 0px;
+            }
+    
+            #owned-planets-panel {
+                border-style: solid none solid none;
+                border-color: $bg-2;
+                overflow: auto;
+                max-height: 300px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                overflow: auto;
+
+                .no-planets {
+                    margin: 10px 0px;
+                    font-style: italic;
+                }
+            }
+        }
+    }
+}

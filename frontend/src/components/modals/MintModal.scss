@@ -1,0 +1,39 @@
+#mint-modal-component {
+    width: 300px;
+
+    #progress-bar-container {
+        display: grid;
+
+        #progress-bar {
+            position: relative;
+            display: grid;
+            background: $bg1-shadow;
+            width: 240px;
+            height: 40px;
+            border-radius: 20px;
+            overflow: hidden;
+            margin: auto;
+            box-shadow: 0px 0px 8px 4px $bg1-shadow;
+
+            .bar-progress {
+                display: grid;
+                z-index: 0;
+                position: absolute;
+                background: $bg-1;
+                left: 0px;
+                top: 0px;
+                height: 40px;
+                min-width: 20px;
+
+                div {
+                    margin: auto;
+                }
+            }
+
+            .bar-label {
+                z-index: 1;
+                margin: auto;
+            }
+        }
+    }
+}
