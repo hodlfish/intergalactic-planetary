@@ -10,7 +10,6 @@ use std::convert::TryInto;
 use terraswap::asset::{AssetInfo};
 use terraswap::querier::query_balance;
 use terra_cosmwasm::TerraQuerier;
-use std::collections::HashSet;
 
 use crate::error::ContractError;
 use crate::msg::{ExecuteMsg, InstantiateMsg, MintMsg, UpdateMsg, MigrateMsg};
@@ -56,8 +55,6 @@ where
         self.whitelist_mint_time.save(deps.storage, &whitelist_mint_time)?;
         let open_mint_time = Timestamp::from_seconds(msg.open_mint_time);
         self.open_mint_time.save(deps.storage, &open_mint_time)?;
-        let minted_set = HashSet::new();
-        self.minted_set.save(deps.storage, &minted_set)?;
 
         Ok(Response::default())
     }
@@ -94,6 +91,7 @@ where
                 msg,
             } => self.send_nft(deps, env, info, contract, token_id, msg),
             ExecuteMsg::Withdraw { denom } => self.withdraw(deps, env, info, denom),
+            ExecuteMsg::UpdatePrice { price } => self.update_price(deps, env, info, price),
         }
     }
 }
@@ -148,11 +146,9 @@ where
             }
 
             //check if already minted
-            let mut minted_set = self.minted_set.load(deps.storage)?;
-            if !minted_set.is_empty() {
-                if minted_set.contains(&info.sender.to_string()) {
-                    return Err(ContractError:: Claimed {});
-                }
+            let claimed = self.claimed.may_load(deps.storage, &info.sender)?;
+            if claimed.is_some() {
+                return Err(ContractError::Claimed {});
             }
 
             let proof = msg.proof.unwrap();
@@ -189,10 +185,8 @@ where
                 return Err(ContractError::MerkleVerification {});
             }
             
-            //Add to address to the minted set
-            minted_set.insert(info.sender.to_string());
-            
-            self.minted_set.save(deps.storage, &minted_set)?;
+            //Add to address to the claimed map
+            self.claimed.save(deps.storage, &info.sender, &true)?;
         }
 
         //Set the info for the token
@@ -273,6 +267,26 @@ where
                     amount: amount - tax_amount,
                 }],
             })))
+    }
+
+    pub fn update_price(
+        &self,
+        deps: DepsMut,
+        _env: Env,
+        info: MessageInfo,
+        price: u64,
+    ) -> Result<Response<C>, ContractError> {
+        //Check if the sender is the addmin
+        let admin = self.admin.load(deps.storage)?;
+        let sender = info.sender.to_string();
+        if admin != sender {
+            return Err(ContractError:: Unauthorized {});
+        }
+
+        //Save the new price
+        self.price.save(deps.storage, &Uint128::from(price))?;
+        Ok(Response::new()
+            .add_attribute("withdraw", price.to_string()))
     }
 }
 

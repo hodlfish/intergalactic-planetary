@@ -2,7 +2,6 @@ use schemars::JsonSchema;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::marker::PhantomData;
-use std::collections::HashSet;
 
 use cosmwasm_std::{Addr, BlockInfo, StdResult, Storage, Timestamp, Uint128};
 
@@ -23,10 +22,10 @@ where
     pub merkle_root: Item<'a, String>,
     pub whitelist_mint_time: Item<'a, Timestamp>,
     pub open_mint_time: Item<'a, Timestamp>,
-    pub minted_set: Item<'a, HashSet<String>>,
 
     /// Stored as (granter, operator) giving operator full control over granter's account
     pub operators: Map<'a, (&'a Addr, &'a Addr), Expiration>,
+    pub claimed: Map<'a, &'a Addr, bool>,
     pub tokens: IndexedMap<'a, &'a str, TokenInfo<T>, TokenIndexes<'a, T>>,
 
     pub(crate) _custom_response: PhantomData<C>,
@@ -56,7 +55,7 @@ where
             "price",
             "open_mint_time",
             "whitelist_mint_time",
-            "minted_set",
+            "claimed",
             "operators",
             "tokens",
             "tokens__owner",
@@ -82,7 +81,7 @@ where
         merkle_root_key: &'a str,
         open_mint_time_key: &'a str,
         whitelist_mint_time_key: &'a str,
-        minted_set_key: &'a str,
+        claimed_key: &'a str,
     ) -> Self {
         let indexes = TokenIndexes {
             owner: MultiIndex::new(token_owner_idx, tokens_key, tokens_owner_key),
@@ -98,7 +97,7 @@ where
             merkle_root: Item::new(merkle_root_key),
             open_mint_time: Item::new(open_mint_time_key),
             whitelist_mint_time: Item::new(whitelist_mint_time_key),
-            minted_set: Item::new(minted_set_key),
+            claimed: Map::new(claimed_key),
             operators: Map::new(operator_key),
             tokens: IndexedMap::new(tokens_key, indexes),
             _custom_response: PhantomData,

@@ -6,7 +6,7 @@ use cosmwasm_std::{to_binary, Binary, BlockInfo, Deps, Env, Order, Pair, StdErro
 use cw0::maybe_addr;
 use cw721::{
     AllNftInfoResponse, ApprovedForAllResponse, ContractInfoResponse, CustomMsg, Cw721Query,
-    Expiration, NftInfoResponse, NumTokensResponse, OwnerOfResponse, TokensResponse,
+    Expiration, NftInfoResponse, NumTokensResponse, OwnerOfResponse, TokensResponse, NftDataExtension,
 };
 use cw_storage_plus::Bound;
 
@@ -31,11 +31,11 @@ where
         Ok(NumTokensResponse { count })
     }
 
-    fn nft_info(&self, deps: Deps, token_id: String) -> StdResult<NftInfoResponse<T>> {
+    fn nft_info(&self, deps: Deps, token_id: String) -> StdResult<NftInfoResponse> {
         let info = self.tokens.load(deps.storage, &token_id)?;
         Ok(NftInfoResponse {
-            token_uri: info.token_uri,
-            extension: info.extension,
+            image: info.token_uri.clone(),
+            extension: create_extension(info.token_uri, token_id)
         })
     }
 
@@ -112,8 +112,7 @@ where
         limit: Option<u32>,
     ) -> StdResult<TokensResponse> {
         let limit = limit.unwrap_or(DEFAULT_LIMIT).min(MAX_LIMIT) as usize;
-        let start_addr = maybe_addr(deps.api, start_after)?;
-        let start = start_addr.map(|addr| Bound::exclusive(addr.as_ref()));
+        let start = start_after.map(Bound::exclusive);
 
         let tokens: StdResult<Vec<String>> = self
             .tokens
@@ -130,7 +129,7 @@ where
         env: Env,
         token_id: String,
         include_expired: bool,
-    ) -> StdResult<AllNftInfoResponse<T>> {
+    ) -> StdResult<AllNftInfoResponse> {
         
         let info = self.tokens.load(deps.storage, &token_id)?;
         Ok(AllNftInfoResponse {
@@ -139,8 +138,8 @@ where
                 approvals: humanize_approvals(&env.block, &info, include_expired),
             },
             info: NftInfoResponse {
-                token_uri: info.token_uri,
-                extension: info.extension,
+                image: info.token_uri.clone(),
+                extension: create_extension(info.token_uri, token_id),
             },
         })
     }
@@ -214,14 +213,14 @@ where
         deps: Deps,
         env: Env,
         mut token_ids: Vec<String>,
-    ) -> StdResult<NftsDataResponse<T>> {
+    ) -> StdResult<NftsDataResponse> {
         if token_ids.len() > 10 {
             return Err(StdError::GenericErr { msg: "Query Limit of 10 NFTs".to_string()});
         } 
         //Sort and remove duplicates from token_ids
         token_ids.sort();
         token_ids.dedup();
-        let mut nfts: Vec<NftDataResponse<T>> = Vec::new();
+        let mut nfts: Vec<NftDataResponse> = Vec::new();
         for token_id in token_ids.iter() {
             let info = self.tokens.may_load(deps.storage, &token_id)?;
             
@@ -233,9 +232,9 @@ where
                             approvals: humanize_approvals(&env.block, &p, false),
                         },
                         token_id: Some(token_id.to_string()),
-                        token_uri: p.token_uri,
+                        token_uri: p.token_uri.clone(),
                         data: p.data,
-                        extension: p.extension,
+                        extension: create_extension(p.token_uri.clone(),token_id.to_string()),
                     }),
                 None => (),
             }
@@ -270,4 +269,12 @@ fn humanize_approval(approval: &Approval) -> cw721::Approval {
     }
 }
 
-
+fn create_extension(
+    image_uri: Option<String>,
+    nft_id: String,
+) -> NftDataExtension {
+    NftDataExtension {
+        image: image_uri,
+        name: format!("Planet #{}", nft_id),
+    }
+}

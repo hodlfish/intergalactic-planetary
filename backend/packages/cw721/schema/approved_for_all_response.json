@@ -1,27 +1,16 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "AllNftInfoResponse",
+  "title": "ApprovedForAllResponse",
   "type": "object",
   "required": [
-    "access",
-    "info"
+    "operators"
   ],
   "properties": {
-    "access": {
-      "description": "Who can transfer the token",
-      "allOf": [
-        {
-          "$ref": "#/definitions/OwnerOfResponse"
-        }
-      ]
-    },
-    "info": {
-      "description": "Data on the token itself,",
-      "allOf": [
-        {
-          "$ref": "#/definitions/NftInfoResponse"
-        }
-      ]
+    "operators": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Approval"
+      }
     }
   },
   "definitions": {
@@ -48,7 +37,7 @@
     },
     "Expiration": {
       "description": "Expiration represents a point in time when some event happens. It can compare with a BlockInfo and will return is_expired() == true once the condition is hit (and for every block in the future)",
-      "oneOf": [
+      "anyOf": [
         {
           "description": "AtHeight will expire when `env.block.height` >= height",
           "type": "object",
@@ -91,68 +80,6 @@
           "additionalProperties": false
         }
       ]
-    },
-    "NftDataExtension": {
-      "type": "object",
-      "required": [
-        "name"
-      ],
-      "properties": {
-        "image": {
-          "description": "Token Image",
-          "type": [
-            "string",
-            "null"
-          ]
-        },
-        "name": {
-          "description": "Token Name",
-          "type": "string"
-        }
-      }
-    },
-    "NftInfoResponse": {
-      "type": "object",
-      "required": [
-        "extension"
-      ],
-      "properties": {
-        "extension": {
-          "description": "You can add any custom metadata here when you extend cw721-base",
-          "allOf": [
-            {
-              "$ref": "#/definitions/NftDataExtension"
-            }
-          ]
-        },
-        "image": {
-          "description": "\"A URI pointing to a resource with mime type image/* representing the asset to which this NFT represents. Consider making any images at a width between 320 and 1080 pixels and aspect ratio between 1.91:1 and 4:5 inclusive. TODO: Use https://docs.rs/url_serde for type-safety",
-          "type": [
-            "string",
-            "null"
-          ]
-        }
-      }
-    },
-    "OwnerOfResponse": {
-      "type": "object",
-      "required": [
-        "approvals",
-        "owner"
-      ],
-      "properties": {
-        "approvals": {
-          "description": "If set this address is approved to transfer/send the token as well",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Approval"
-          }
-        },
-        "owner": {
-          "description": "Owner of the token",
-          "type": "string"
-        }
-      }
     },
     "Timestamp": {
       "description": "A point in time in nanosecond precision.\n\nThis type can represent times from 1970-01-01T00:00:00Z to 2554-07-21T23:34:33Z.\n\n## Examples\n\n``` # use cosmwasm_std::Timestamp; let ts = Timestamp::from_nanos(1_000_000_202); assert_eq!(ts.nanos(), 1_000_000_202); assert_eq!(ts.seconds(), 1); assert_eq!(ts.subsec_nanos(), 202);\n\nlet ts = ts.plus_seconds(2); assert_eq!(ts.nanos(), 3_000_000_202); assert_eq!(ts.seconds(), 3); assert_eq!(ts.subsec_nanos(), 202); ```",

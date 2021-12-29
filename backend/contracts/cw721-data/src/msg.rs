@@ -75,6 +75,9 @@ pub enum ExecuteMsg<T> {
 
     // Withdraw balance from the contract
     Withdraw { denom: String},
+
+    // Update the mint price of the NFT Token
+    UpdatePrice { price: u64 }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, JsonSchema)]

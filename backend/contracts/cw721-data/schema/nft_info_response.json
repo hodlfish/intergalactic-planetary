@@ -2,20 +2,20 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "NftInfoResponse",
   "type": "object",
+  "required": [
+    "extension"
+  ],
   "properties": {
     "extension": {
       "description": "You can add any custom metadata here when you extend cw721-base",
-      "anyOf": [
+      "allOf": [
         {
-          "$ref": "#/definitions/Empty"
-        },
-        {
-          "type": "null"
+          "$ref": "#/definitions/NftDataExtension"
         }
       ]
     },
-    "token_uri": {
-      "description": "Universal resource identifier for this NFT Should point to a JSON file that conforms to the ERC721 Metadata JSON Schema",
+    "image": {
+      "description": "\"A URI pointing to a resource with mime type image/* representing the asset to which this NFT represents. Consider making any images at a width between 320 and 1080 pixels and aspect ratio between 1.91:1 and 4:5 inclusive. TODO: Use https://docs.rs/url_serde for type-safety",
       "type": [
         "string",
         "null"
@@ -23,9 +23,24 @@
     }
   },
   "definitions": {
-    "Empty": {
-      "description": "An empty struct that serves as a placeholder in different places, such as contracts that don't set a custom message.\n\nIt is designed to be expressable in correct JSON and JSON Schema but contains no meaningful data. Previously we used enums without cases, but those cannot represented as valid JSON Schema (https://github.com/CosmWasm/cosmwasm/issues/451)",
-      "type": "object"
+    "NftDataExtension": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "image": {
+          "description": "Token Image",
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "name": {
+          "description": "Token Name",
+          "type": "string"
+        }
+      }
     }
   }
 }

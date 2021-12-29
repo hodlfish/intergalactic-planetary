@@ -4,7 +4,7 @@ use cosmwasm_std::{from_binary, to_binary, CosmosMsg, DepsMut, Empty, Response, 
 
 use cw721::{
     ApprovedForAllResponse, ContractInfoResponse, Cw721Query, Cw721ReceiveMsg, Expiration,
-    NftInfoResponse, OwnerOfResponse,
+    NftInfoResponse, OwnerOfResponse, NftDataExtension,
 };
 use terraswap::asset::{Asset, AssetInfo};
 
@@ -146,9 +146,12 @@ fn open_minting_correct_price() {
     let info = contract.nft_info(deps.as_ref(), 1.to_string()).unwrap();
     assert_eq!(
         info,
-        NftInfoResponse::<Extension> {
-            token_uri: Some(token_uri),
-            extension: None,
+        NftInfoResponse {
+            image: Some(token_uri.clone()),
+            extension: NftDataExtension {
+                image: Some(token_uri.clone()),
+                name: "Planet #1".to_string(),
+            },
         }
     );
 }
@@ -326,9 +329,12 @@ fn whitelist_mint_correct_price() {
     let info = contract.nft_info(deps.as_ref(), 1.to_string()).unwrap();
     assert_eq!(
         info,
-        NftInfoResponse::<Extension> {
-            token_uri: Some(token_uri),
-            extension: None,
+        NftInfoResponse {
+            image: Some(token_uri.clone()),
+            extension: NftDataExtension {
+                image: Some(token_uri.clone()),
+                name: "Planet #1".to_string(),
+            },
         }
     );
 

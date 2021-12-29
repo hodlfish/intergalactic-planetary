@@ -25,7 +25,7 @@ library = []
 [dependencies]
 cw0 = { version = "0.9.0" }
 cw2 = { version = "0.9.0" }
-cw721 = { version = "0.9.0" }
+cw721 = { path = "../../packages/cw721", version = "0.9.0" }
 cw-storage-plus = { version = "0.9.0" }
 cosmwasm-std = { version = "0.16.0" , features = ["staking"] }
 terra-cosmwasm = "2.2.0"
