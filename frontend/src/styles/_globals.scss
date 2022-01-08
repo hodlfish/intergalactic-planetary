@@ -76,6 +76,16 @@ canvas {
     }
 }
 
+.curtain {
+    display: grid;
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    height: 100vh;
+    width: 100vw;
+    z-index: 11;
+}
+
 #header {
     position: absolute;
     display: grid;

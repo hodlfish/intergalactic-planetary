@@ -1,13 +1,22 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { pushNotification, useGlobalState } from 'hooks/useGlobalState';
-import Toolbar from './PlanetToolbar';
+import PlanetToolbar from './PlanetToolbar';
+import VoxelToolbar from './VoxelToolbar';
 import PlanetEditor from 'scripts/scenes/planet-editor';
+import VoxelPlanet from 'scripts/scenes/voxel-editor';
 import GalacticSpec from 'scripts/galactic-spec';
 import { useNavigate, useLocation, useParams } from 'react-router';
 import ConfirmationModal from 'components/modals/ConfirmationModal';
 import Engine from 'scripts/engine/engine';
 import { copyToClipboard } from 'scripts/utility';
 import Settings from 'scripts/settings';
+import VoxelEditor from 'scripts/scenes/voxel-editor';
+import templates from 'scripts/objects/geo-planet/templates';
+import { getPlanets } from 'scripts/api';
+
+enum PlanetType {
+    Geo, Voxel
+}
 
 function PlanetViewer() {
     const navigate = useNavigate();
@@ -18,42 +27,69 @@ function PlanetViewer() {
     const [ownedPlanets, ] = useGlobalState('ownedPlanets');
     const [loading, setLoading] = useState<boolean>(true);
     const [editing, setEditing] = useState<boolean>(false);
-    const scene = useRef<PlanetEditor>();
+    const [planetType, setPlanetType] = useState<PlanetType>();
+    const [planetData, setPlanetData] = useState<string>();
+    const [scene, setScene] = useState<PlanetEditor | VoxelPlanet>();
 
+    // Load planet data
     useEffect(() => {
-        // Verify planet ID
+        // Get and check planetId
         const newPlanetId = params!.id!.toString();
         if (newPlanetId !== 'sandbox' && !GalacticSpec.isValidPlanetId(newPlanetId)) {
             navigate('/galaxy');
             pushNotification(`Planet ${newPlanetId} does not exist!`);
             return;
         }
+        setPlanetId(newPlanetId);
 
-        // Parse params
-        setPlanetId(newPlanetId)
+        // Check edit mode
         const parsed = new URLSearchParams(location.search);
         const edit = parseInt(parsed.get('edit') || '0');
         if (edit === 1 || newPlanetId === 'sandbox') {
             setEditing(true);
         }
 
-        // Initialize scene
-        scene.current = new PlanetEditor(newPlanetId);
-        scene.current.onLoadEvent = (success: boolean, message?: string) => {
-            if (success) {
-                setLoading(false);
-                Engine.instance.curtain.fadeIn();
-                if (message) {
-                    pushNotification(message, 0);
+        // Get remote planet data
+        if (newPlanetId === 'sandbox') {
+            getPlanets([newPlanetId]).then(planetInfos => {
+                if (planetInfos.length > 0 && planetInfos[0].data) {
+                    return planetInfos[0].data;
+                } else {
+                    return templates.default;
                 }
-            }
-        }
-        scene.current.initialize();
-
-        return () => {
-            scene.current!.dispose();
+            }).catch(() => {
+                return templates.unminted;
+            }).then(data => {
+                setPlanetData(data);
+                setPlanetType(data.startsWith('GEO') ? PlanetType.Geo : PlanetType.Voxel);
+                setLoading(false);
+                Engine.instance.curtain.fadeIn(1.0);
+            });
+        } else {
+            setPlanetData(templates.default);
+            setPlanetType(PlanetType.Geo);
+            setLoading(false);
+            Engine.instance.curtain.fadeIn(1.0);
         }
     }, [location.search, navigate, params])
+
+    useEffect(() => {
+        if (!planetType === undefined || planetData === undefined) {
+            return;
+        }
+
+        const newScene = (planetType === PlanetType.Geo) ? new PlanetEditor() : new VoxelEditor();
+        if (planetType === PlanetType.Geo && planetData.startsWith('GEO')) {
+            newScene.planet.deserialize(planetData);
+        }
+        setScene(newScene);
+
+        return () => {
+            if(newScene) {
+                newScene.dispose();
+            }
+        }
+    }, [planetType, planetId])
 
     const isSandbox = () => {
         return planetId === 'sandbox';
@@ -64,8 +100,8 @@ function PlanetViewer() {
     }
 
     const navigateToSystem = (confirm = false) => {
-        if (scene.current) {
-            if ( !confirm && isOwner() && scene.current.isUnsaved()) {
+        if (scene) {
+            if ( !confirm && isOwner() && scene.isUnsaved()) {
                 setConfirmModal(true);
             } else {
                 Engine.instance.curtain.fadeOut(1.0, () => {
@@ -89,6 +125,26 @@ function PlanetViewer() {
             copyToClipboard(`${Settings.WEBSITE_URL}/planet/${planetId}`);
             pushNotification('Link copied to clipboard!', 0);
         }
+    }
+
+    const renderToolbar = () => {
+        if(!loading && scene && editing && ((isSandbox() || isOwner()))) {
+            if (scene instanceof PlanetEditor) {
+                return (
+                    <PlanetToolbar editor={scene as PlanetEditor} planetId={planetId!}/>
+                )
+            } else {
+                return (
+                    <VoxelToolbar editor={scene as VoxelEditor}/>
+                )
+            }
+        } else {
+            return '';
+        }
+    }
+
+    const onChangePlanetType = () => {
+        setPlanetType(planetType === PlanetType.Geo ? PlanetType.Voxel : PlanetType.Geo);
     }
 
     return (
@@ -130,10 +186,13 @@ function PlanetViewer() {
                         </svg>
                     </div>
                 }
+                <div className="circle-button" onClick={() => onChangePlanetType()}>
+                    <svg>
+                        <use href="#ico"/>
+                    </svg>
+                </div>
             </div>
-            {!loading && scene && editing && ((isSandbox() || isOwner())) && 
-                <Toolbar editor={scene.current!}/>
-            }
+            {renderToolbar()}
         </div>
     );
 }

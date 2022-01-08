@@ -7,6 +7,7 @@ import Water from './geo-planet/water';
 import GameObject from 'scripts/engine/game-object';
 import { UpdateState } from 'scripts/engine/engine';
 import { verifyBase64 } from 'scripts/base-64';
+import { COLOR_PALETTE_SIZE } from './geo-planet/settings';
 
 class GeoPlanet extends GameObject {
     scenery: Scenery;
@@ -19,7 +20,7 @@ class GeoPlanet extends GameObject {
     constructor(rotationSpeed = 0.0) {
         super();
         this.rotationSpeed = rotationSpeed;
-        this.colorPalette = new ColorPalette();
+        this.colorPalette = new ColorPalette(COLOR_PALETTE_SIZE);
         this.terrain = new Terrain(this.colorPalette);
         this.scenery = new Scenery(this.terrain, this.colorPalette);
         this.atmosphere = new Atmosphere(new THREE.Color(0x32a2a8), 128, 64);

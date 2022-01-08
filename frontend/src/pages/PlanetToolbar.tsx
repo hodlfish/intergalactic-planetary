@@ -10,7 +10,8 @@ import { naturalSort } from 'scripts/utility';
 import { useCallback } from 'react';
 
 interface ToolbarProps {
-    editor: PlanetEditor
+    editor: PlanetEditor,
+    planetId: string
 } 
 
 const defaults = {
@@ -25,7 +26,7 @@ const defaults = {
 
 function Toolbar(props: ToolbarProps) {
     const wallet = useConnectedWallet();
-    const { editor } = props;
+    const { editor, planetId } = props;
     const [hideToolSettings, setHideToolSettings] = useState<boolean>(false);
     const [saveModal, setSaveModal] = useState<boolean>(false);
     const [selectedTool, setSelectedTool] = useState<EditorTool | undefined>(defaults.tool);
@@ -139,7 +140,7 @@ function Toolbar(props: ToolbarProps) {
     }
 
     const onExportPlanet = () => {
-        editor.planet.export(`Planet ${editor.planetId}`);
+        editor.planet.export(`Planet ${planetId}`);
     }
 
     const onImportPlanet = () => {
@@ -208,7 +209,7 @@ function Toolbar(props: ToolbarProps) {
                         <span className="tooltip">{tool.description}</span>
                     </div>
                 )}
-                {(!editor.isSandbox()) &&
+                {(planetId !== 'sandbox') &&
                     <div className="tool-item" onClick={() => setSaveModal(true)}>
                         <svg width="24" height="24">
                             <use href={`#save`} />
@@ -381,7 +382,7 @@ function Toolbar(props: ToolbarProps) {
     return (
         <div id="ico-toolbar-component">
             {(saveModal && wallet) && 
-                <SaveModal editor={editor} planetId={editor.planetId} onClose={() => setSaveModal(false)} onSave={() => editor.markSaved()}/>
+                <SaveModal editor={editor} planetId={planetId} onClose={() => setSaveModal(false)} onSave={() => editor.markSaved()}/>
             }
             <div id="toolbar">
                 {renderToolTitle()}

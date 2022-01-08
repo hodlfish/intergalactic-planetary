@@ -1,8 +1,10 @@
 #ico-toolbar-component {
     @include bottom-panel;
+    pointer-events: none;
 
     #toolbar {
         position: relative;
+        pointer-events: all;
         display: grid;
         grid-template-columns: 1fr max-content;
         grid-template-rows: min-content min-content;
