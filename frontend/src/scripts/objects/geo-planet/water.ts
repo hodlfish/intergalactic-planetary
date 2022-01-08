@@ -1,15 +1,16 @@
 import * as THREE from 'three';
-import atmosphereShader from 'scripts/shaders/geoPlanet/atmosphere-shader';
+import waterShader from 'scripts/shaders/geo-planet/water-shader';
 import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
 import {
-    deserializeColor, serializeColor,
-    ATMOSPHERE_MIN_HEIGHT, ATMOSPHERE_HEIGHT_RANGE
+    MIN_HEIGHT, HEIGHT_RANGE, deserializeColor, serializeColor
 } from './settings';
-import { LayerDefinitions } from 'scripts/engine/engine';
+import Engine, { LayerDefinitions } from 'scripts/engine/engine';
 import { CallbackSet } from 'scripts/engine/helpers';
 
-export class Atmosphere {
+
+class Water {
     static SERIALIZED_SIZE = 7;
+    static waterGeometry = new THREE.IcosahedronGeometry(1, 15);
 
     _color: THREE.Color;
     _height: number;
@@ -25,22 +26,28 @@ export class Atmosphere {
         this._density = density;
         this.material = new THREE.ShaderMaterial({
             uniforms: {
-                atmosphereColor: {value: this._color},
-                density: {value: this.displayDensity},
-                size: {value: this.displayHeight}
+                waterColor: {value: this._color},
+                time: {value: 0.0},
+                speed: {value: 0.5},
+                waveDensity: {value: 50.0},
+                tDepth: {value: null},
+                density: {value: this.normalizedDensity},
+                cameraNear: {value: Engine.instance.camera.near},
+                cameraFar: {value: Engine.instance.camera.far},
+                foamDepth: {value: 0.02},
+                cameraDirection: {value: new THREE.Vector3()},
+                ambientLight: {value: 0.33}
             },
-            vertexShader: atmosphereShader.vertex,
-            fragmentShader: atmosphereShader.fragment,
-            blending: THREE.AdditiveBlending,
+            vertexShader: waterShader.vertex,
+            fragmentShader: waterShader.fragment,
             transparent: true,
-            depthWrite: false,
-            side: THREE.DoubleSide
+            depthWrite: false
         });
         this.mesh = new THREE.Mesh(
-            new THREE.PlaneGeometry(1.0, 1.0, 1, 1),
+            Water.waterGeometry,
             this.material
         );
-        this.mesh.layers.set(LayerDefinitions.background);
+        this.mesh.layers.set(LayerDefinitions.transparent);
         this.onBeforeChange = new CallbackSet();
         this.onAfterChange = new CallbackSet();
     }
@@ -53,22 +60,7 @@ export class Atmosphere {
         this.onAfterChange.call(this._height, this._density, this._color);
     }
 
-    get density(): number {
-        return this._density;
-    }
-
-    set density(value: number) {
-        this.emitBeforeUpdate();
-        this._density = value;
-        (this.mesh.material as any).uniforms.density.value = this.displayDensity;
-        this.emitAfterUpdate();
-    }
-
-    get displayDensity(): number {
-        return this._density / 255;
-    }
-
-    get height() {
+    get height(): number {
         return this._height;
     }
 
@@ -79,28 +71,54 @@ export class Atmosphere {
             this.mesh.visible = false;
         } else {
             this.mesh.visible = true;
-            (this.mesh.material as any).uniforms.size.value = this.displayHeight;
+            const scale = this.displayHeight;
+            this.mesh.scale.set(scale, scale, scale);
         }
         this.emitAfterUpdate();
     }
 
     get displayHeight(): number {
-        return ATMOSPHERE_MIN_HEIGHT * 2 + (this._height / 255) * ATMOSPHERE_HEIGHT_RANGE * 2;
+        return MIN_HEIGHT + (this._height / 255 * HEIGHT_RANGE) - (HEIGHT_RANGE / 510);
+    }
+
+    get density(): number {
+        return this._density;
+    }
+
+    set density(value: number) {
+        this.emitBeforeUpdate();
+        this._density = value;
+        (this.mesh.material as any).uniforms.density.value = this.normalizedDensity;
+        this.emitAfterUpdate();
+    }
+
+    get normalizedDensity(): number {
+        return (1.0 - (this.density / 255));
     }
 
     get color(): THREE.Color {
         return this._color;
     }
 
+    // Works with hex string or THREE color.
     set color(value: string | THREE.Color) {
         this.emitBeforeUpdate();
         this._color = new THREE.Color(value);
-        (this.mesh.material as any).uniforms.atmosphereColor.value = this._color;
+        (this.mesh.material as any).uniforms.waterColor.value = this._color;
         this.emitAfterUpdate();
     }
 
+    setDepthTexture(texture: THREE.DepthTexture) {
+        (this.mesh.material as any).uniforms.tDepth.value = texture;
+    }
+
+    animate() {
+        (this.mesh.material as any).uniforms.time.value = Date.now() / 1000 % 1000;
+        (this.material as any).uniforms.cameraDirection.value = Engine.instance.cameraDirection;
+    }
+
     serialize(): string {
-        let base64 = serializeColor(this._color);
+        let base64 = serializeColor(this.color);
         base64 += binaryToBase64(
             this.height.toString(2).padStart(8, '0') +
             this.density.toString(2).padStart(8, '0') + '00'
@@ -109,7 +127,7 @@ export class Atmosphere {
     }
 
     deserialize(base64: string) {
-        if (base64.length !== Atmosphere.SERIALIZED_SIZE) {
+        if (base64.length !== Water.SERIALIZED_SIZE) {
             return false;
         }
         const binary = base64ToBinary(base64);
@@ -120,9 +138,8 @@ export class Atmosphere {
     }
 
     dispose() {
-        this.mesh.geometry.dispose();
         this.material.dispose();
     }
 }
 
-export default Atmosphere;
+export default Water;

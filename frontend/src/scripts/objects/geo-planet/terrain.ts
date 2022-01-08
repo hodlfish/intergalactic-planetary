@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import terrainShader from 'scripts/shaders/geoPlanet/terrain-shader';
+import terrainShader from 'scripts/shaders/geo-planet/terrain-shader';
 import { HEIGHT_RANGE, MIN_HEIGHT, UNIQUE_VERTICES, COLOR_PALETTE_SIZE } from './settings';
 import { lerp } from 'three/src/math/MathUtils';
 import ColorPalette from '../color-palette';

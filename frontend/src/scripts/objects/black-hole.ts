@@ -1,6 +1,6 @@
 import { LayerDefinitions } from 'scripts/engine/engine';
-import blackHoleShader from 'scripts/shaders/blackHole-shader';
-import atmosphereShader from 'scripts/shaders/geoPlanet/atmosphere-shader';
+import blackHoleShader from 'scripts/shaders/black-hole-shader';
+import atmosphereShader from 'scripts/shaders/geo-planet/atmosphere-shader';
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/game-object';
 
