@@ -1,5 +1,5 @@
-import { UpdateState } from 'scripts/engine/Engine';
-import GameObject from 'scripts/engine/GameObject';
+import { UpdateState } from 'scripts/engine/engine';
+import GameObject from 'scripts/engine/game-object';
 import * as THREE from 'three';
 
 class Projectile extends GameObject {

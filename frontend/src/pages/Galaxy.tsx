@@ -1,8 +1,8 @@
 import { getGlobalState, useGlobalState } from "hooks/useGlobalState";
 import { useRef, useEffect, useState } from "react";
-import Galaxy from "scripts/scenes/Galaxy";
-import GalacticSpec from "scripts/GalacticSpec";
-import Engine from 'scripts/engine/Engine';
+import Galaxy from "scripts/scenes/galaxy";
+import GalacticSpec from "scripts/galactic-spec";
+import Engine from 'scripts/engine/engine';
 import { useNavigate, useLocation } from 'react-router';
 
 function GalaxyViewer() {

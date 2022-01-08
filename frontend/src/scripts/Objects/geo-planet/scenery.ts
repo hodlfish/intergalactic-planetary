@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
-import sceneryShader from 'scripts/shaders/geoPlanet/SceneryShader';
-import ColorPalette from '../ColorPalette';
-import { Terrain } from './Terrain';
-import Engine, { LayerDefinitions } from 'scripts/engine/Engine';
-import { getModel, ModelPacks } from 'scripts/ModelLoader';
-import GalacticSpec from 'scripts/GalacticSpec';
-import { CallbackSet } from 'scripts/engine/Helpers';
+import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
+import sceneryShader from 'scripts/shaders/geoPlanet/scenery-shader';
+import ColorPalette from '../color-palette';
+import { Terrain } from './terrain';
+import Engine, { LayerDefinitions } from 'scripts/engine/engine';
+import { getModel, ModelPacks } from 'scripts/model-loader';
+import GalacticSpec from 'scripts/galactic-spec';
+import { CallbackSet } from 'scripts/engine/helpers';
 
 interface SceneryInstance {
     objectId: number;

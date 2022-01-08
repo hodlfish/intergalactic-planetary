@@ -1,7 +1,7 @@
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import backgroundShader from 'scripts/shaders/BackgroundShader';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import backgroundShader from 'scripts/shaders/background-shader';
 import * as THREE from 'three';
-import GameObject from 'scripts/engine/GameObject';
+import GameObject from 'scripts/engine/game-object';
 
 export class Background extends GameObject {
     material: THREE.Material;

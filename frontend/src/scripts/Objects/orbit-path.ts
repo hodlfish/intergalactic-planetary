@@ -1,7 +1,7 @@
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import orbitPathShader from 'scripts/shaders/OrbitPathShader';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import orbitPathShader from 'scripts/shaders/orbit-path-shader';
 import * as THREE from 'three';
-import GameObject from 'scripts/engine/GameObject';
+import GameObject from 'scripts/engine/game-object';
 
 export class OrbitPath extends GameObject {
     material: THREE.Material;

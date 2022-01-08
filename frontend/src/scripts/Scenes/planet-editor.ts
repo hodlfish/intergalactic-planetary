@@ -1,14 +1,14 @@
 import * as THREE from 'three';
-import GameObject from 'scripts/engine/GameObject';
-import Planet from 'scripts/objects/IcoPlanet';
-import Background from 'scripts/objects/Background';
-import Axes from 'scripts/objects/Axes';
-import { UpdateState } from 'scripts/engine/Engine';
-import { Model } from 'scripts/ModelLoader';
-import TargetCamera from 'scripts/cameras/TargetCamera';
-import { CallbackSet } from 'scripts/engine/Helpers';
-import { getPlanets } from 'scripts/Api';
-import Templates from 'scripts/objects/geoPlanet/Templates';
+import GameObject from 'scripts/engine/game-object';
+import Planet from 'scripts/objects/geo-planet';
+import Background from 'scripts/objects/background';
+import Axes from 'scripts/objects/axes';
+import { UpdateState } from 'scripts/engine/engine';
+import { Model } from 'scripts/model-loader';
+import TargetCamera from 'scripts/cameras/target-camera';
+import { CallbackSet } from 'scripts/engine/helpers';
+import { getPlanets } from 'scripts/api';
+import Templates from 'scripts/objects/geo-planet/templates';
 
 export interface EditorTool {
     name: string,

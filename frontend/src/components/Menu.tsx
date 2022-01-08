@@ -3,14 +3,14 @@ import ClickAwayListener from "react-click-away-listener";
 import { useNavigate } from "react-router";
 import Wallet from './Wallet';
 import { useState, useEffect } from 'react';
-import { getWalletPlanets } from "scripts/Api";
+import { getWalletPlanets } from "scripts/api";
 import { getGlobalState, useGlobalState } from "hooks/useGlobalState";
-import GalacticSpec from 'scripts/GalacticSpec';
+import GalacticSpec from 'scripts/galactic-spec';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
 import MintModal from './modals/MintModal';
-import Engine from 'scripts/engine/Engine';
+import Engine from 'scripts/engine/engine';
 import { useLocation } from 'react-router';
-import Music from 'scripts/Music';
+import Music from 'scripts/music';
 import Loading from 'components/Loading';
 
 const links = [

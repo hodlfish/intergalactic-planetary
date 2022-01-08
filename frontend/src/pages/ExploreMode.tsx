@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState } from "react";
-import ExploreScene from "scripts/scenes/Explore";
+import ExploreScene from "scripts/scenes/explore";
 import { isMobile } from 'react-device-detect';
 import { useNavigate, useParams } from "react-router";
-import Engine from "scripts/engine/Engine";
-import GalacticSpec from "scripts/GalacticSpec";
+import Engine from "scripts/engine/engine";
+import GalacticSpec from "scripts/galactic-spec";
 import { getGlobalState } from "hooks/useGlobalState";
 import Modal from 'components/modals/Modal';
 

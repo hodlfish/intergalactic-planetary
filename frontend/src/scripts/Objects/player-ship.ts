@@ -1,13 +1,13 @@
-import Engine, { LayerDefinitions, UpdateState } from 'scripts/engine/Engine';
+import Engine, { LayerDefinitions, UpdateState } from 'scripts/engine/engine';
 import * as THREE from 'three';
-import spaceAssetShader from 'scripts/shaders/SpaceAssetShader';
-import GameObject from 'scripts/engine/GameObject';
+import spaceAssetShader from 'scripts/shaders/space-asset-shader';
+import GameObject from 'scripts/engine/game-object';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
-import IcoPlanet from './IcoPlanet';
-import Projectile from './Projectile';
-import ExplosionEffect from './ExplosionEffect';
-import Crosshair from './Crosshair';
-import ShipMap from './ShipMap';
+import IcoPlanet from './geo-planet';
+import Projectile from './projectile';
+import ExplosionEffect from './explosion-effect';
+import Crosshair from './crosshair';
+import ShipMap from './ship-map';
 
 export class PlayerShip extends GameObject {
     static MOVEMENT_SPEED = 0.5;

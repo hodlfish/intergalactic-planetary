@@ -1,8 +1,8 @@
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import blackHoleShader from 'scripts/shaders/BlackHoleShader';
-import atmosphereShader from 'scripts/shaders/geoPlanet/AtmosphereShader';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import blackHoleShader from 'scripts/shaders/blackHole-shader';
+import atmosphereShader from 'scripts/shaders/geoPlanet/atmosphere-shader';
 import * as THREE from 'three';
-import GameObject from 'scripts/engine/GameObject';
+import GameObject from 'scripts/engine/game-object';
 
 export class BlackHole extends GameObject {
     blackHoleMaterial: THREE.Material;

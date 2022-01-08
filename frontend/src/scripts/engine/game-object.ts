@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import Engine, { UpdateState } from './Engine';
+import Engine, { UpdateState } from './engine';
 
 interface LifeCycleHooks {
     update?: (state: UpdateState) => void

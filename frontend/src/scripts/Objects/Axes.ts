@@ -1,5 +1,5 @@
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import GameObject from 'scripts/engine/GameObject';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import GameObject from 'scripts/engine/game-object';
 import * as THREE from 'three';
 
 class Axes extends GameObject {

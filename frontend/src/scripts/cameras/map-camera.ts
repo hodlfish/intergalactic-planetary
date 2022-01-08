@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import { CursorTypes, UpdateState } from 'scripts/engine/Engine';
-import GameObject from 'scripts/engine/GameObject';
+import { CursorTypes, UpdateState } from 'scripts/engine/engine';
+import GameObject from 'scripts/engine/game-object';
 
 interface CameraTransition {
     startPosition: THREE.Vector3,

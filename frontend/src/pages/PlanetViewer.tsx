@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from 'react';
 import { pushNotification, useGlobalState } from 'hooks/useGlobalState';
 import Toolbar from './PlanetToolbar';
-import PlanetEditor from 'scripts/scenes/PlanetEditor';
-import GalacticSpec from 'scripts/GalacticSpec';
+import PlanetEditor from 'scripts/scenes/planet-editor';
+import GalacticSpec from 'scripts/galactic-spec';
 import { useNavigate, useLocation, useParams } from 'react-router';
 import ConfirmationModal from 'components/modals/ConfirmationModal';
-import Engine from 'scripts/engine/Engine';
-import { copyToClipboard } from 'scripts/Utility';
-import Settings from 'scripts/Settings';
+import Engine from 'scripts/engine/engine';
+import { copyToClipboard } from 'scripts/utility';
+import Settings from 'scripts/settings';
 
 function PlanetViewer() {
     const navigate = useNavigate();

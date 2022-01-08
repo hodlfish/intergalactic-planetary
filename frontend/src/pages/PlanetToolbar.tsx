@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
-import PlanetEditor, { EditorTool, EditorTools, BrushChannel } from 'scripts/scenes/PlanetEditor';
+import PlanetEditor, { EditorTool, EditorTools, BrushChannel } from 'scripts/scenes/planet-editor';
 import { useConnectedWallet } from '@terra-money/wallet-provider';
 import SaveModal from 'components/modals/SaveModal';
-import { Model, ModelPacks } from 'scripts/ModelLoader';
-import Scenery from 'scripts/objects/geoPlanet/Scenery';
+import { Model, ModelPacks } from 'scripts/model-loader';
+import Scenery from 'scripts/objects/geo-planet/scenery';
 import ConfirmationModal from 'components/modals/ConfirmationModal';
-import Templates from 'scripts/objects/geoPlanet/Templates';
-import { naturalSort } from 'scripts/Utility';
+import Templates from 'scripts/objects/geo-planet/templates';
+import { naturalSort } from 'scripts/utility';
 import { useCallback } from 'react';
 
 interface ToolbarProps {

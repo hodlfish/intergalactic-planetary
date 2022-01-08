@@ -1,14 +1,14 @@
 import * as THREE from 'three';
-import { Terrain } from './geoPlanet/Terrain';
-import ColorPalette from './ColorPalette';
-import Scenery from './geoPlanet/Scenery';
-import Atmosphere from './geoPlanet/Atmosphere';
-import Water from './geoPlanet/Water';
-import GameObject from 'scripts/engine/GameObject';
-import { UpdateState } from 'scripts/engine/Engine';
-import { verifyBase64 } from 'scripts/Base64';
+import { Terrain } from './geo-planet/terrain';
+import ColorPalette from './color-palette';
+import Scenery from './geo-planet/scenery';
+import Atmosphere from './geo-planet/atmosphere';
+import Water from './geo-planet/water';
+import GameObject from 'scripts/engine/game-object';
+import { UpdateState } from 'scripts/engine/engine';
+import { verifyBase64 } from 'scripts/base-64';
 
-class IcoPlanet extends GameObject {
+class GeoPlanet extends GameObject {
     scenery: Scenery;
     atmosphere: Atmosphere;
     water: Water;
@@ -93,4 +93,4 @@ class IcoPlanet extends GameObject {
     }
 }
 
-export default IcoPlanet;
+export default GeoPlanet;

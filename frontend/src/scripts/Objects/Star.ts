@@ -1,8 +1,8 @@
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import starShader from 'scripts/shaders/StarShader';
-import atmosphereShader from 'scripts/shaders/geoPlanet/AtmosphereShader';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import starShader from 'scripts/shaders/star-shader';
+import atmosphereShader from 'scripts/shaders/geoPlanet/atmosphere-shader';
 import * as THREE from 'three';
-import GameObject from 'scripts/engine/GameObject';
+import GameObject from 'scripts/engine/game-object';
 
 export class Star extends GameObject {
     starMaterial: THREE.Material;

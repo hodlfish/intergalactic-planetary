@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
-import SolarSystem from "scripts/scenes/SolarSystem";
+import SolarSystem from "scripts/scenes/solar-system";
 import { useNavigate, useLocation, useParams } from "react-router";
-import GalacticSpec from "scripts/GalacticSpec";
+import GalacticSpec from "scripts/galactic-spec";
 import { pushNotification, useGlobalState, getGlobalState } from "hooks/useGlobalState";
-import Engine from "scripts/engine/Engine";
-import { copyToClipboard } from "scripts/Utility";
-import Settings from "scripts/Settings";
+import Engine from "scripts/engine/engine";
+import { copyToClipboard } from "scripts/utility";
+import Settings from "scripts/settings";
 import { isBrowser } from 'react-device-detect';
 
 function SolarSystemViewer() {

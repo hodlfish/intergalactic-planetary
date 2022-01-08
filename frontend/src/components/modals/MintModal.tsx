@@ -4,9 +4,9 @@ import Wallet from 'components/Wallet';
 import { getGlobalState, setGlobalState } from 'hooks/useGlobalState';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { getMintTransaction, pollTransaction } from 'scripts/Api';
-import Engine from 'scripts/engine/Engine';
-import GalacticSpec from 'scripts/GalacticSpec';
+import { getMintTransaction, pollTransaction } from 'scripts/api';
+import Engine from 'scripts/engine/engine';
+import GalacticSpec from 'scripts/galactic-spec';
 import Modal from './Modal';
 
 interface MintModalProps {

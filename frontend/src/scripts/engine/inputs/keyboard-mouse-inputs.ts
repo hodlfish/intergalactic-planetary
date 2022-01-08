@@ -1,4 +1,4 @@
-import { Coordinate } from "./Definitions";
+import { Coordinate } from "./definitions";
 
 export class KeyboardMouseInputs {
     static TAP_DELAY = 250;

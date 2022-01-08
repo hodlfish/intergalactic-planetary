@@ -1,8 +1,8 @@
-import { CursorTypes, UpdateState } from 'scripts/engine/Engine';
-import GameObject from 'scripts/engine/GameObject';
-import { CallbackSet } from 'scripts/engine/Helpers';
-import GalacticSpec from 'scripts/GalacticSpec';
-import starMapShader from 'scripts/shaders/StarMapShader';
+import { CursorTypes, UpdateState } from 'scripts/engine/engine';
+import GameObject from 'scripts/engine/game-object';
+import { CallbackSet } from 'scripts/engine/helpers';
+import GalacticSpec from 'scripts/galactic-spec';
+import starMapShader from 'scripts/shaders/star-map-shader';
 import * as THREE from 'three';
 
 class ShipMap extends GameObject {

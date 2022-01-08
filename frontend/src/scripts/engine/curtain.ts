@@ -1,5 +1,5 @@
 import { lerp } from "three/src/math/MathUtils";
-import { Engine } from "./Engine";
+import { Engine } from "./engine";
 
 interface CurtainTransition {
     startTime: number,

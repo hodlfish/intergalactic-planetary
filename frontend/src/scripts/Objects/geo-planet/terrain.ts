@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import terrainShader from 'scripts/shaders/geoPlanet/TerrainShader';
-import { HEIGHT_RANGE, MIN_HEIGHT, UNIQUE_VERTICES, COLOR_PALETTE_SIZE } from './Settings';
+import terrainShader from 'scripts/shaders/geoPlanet/terrain-shader';
+import { HEIGHT_RANGE, MIN_HEIGHT, UNIQUE_VERTICES, COLOR_PALETTE_SIZE } from './settings';
 import { lerp } from 'three/src/math/MathUtils';
-import ColorPalette from '../ColorPalette';
-import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
-import Engine, { LayerDefinitions } from 'scripts/engine/Engine';
-import { CallbackSet } from 'scripts/engine/Helpers';
+import ColorPalette from '../color-palette';
+import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
+import Engine, { LayerDefinitions } from 'scripts/engine/engine';
+import { CallbackSet } from 'scripts/engine/helpers';
 
 export class Vertex {
     static HEIGHT_PRECISION = 256;

@@ -2,11 +2,11 @@ import { useConnectedWallet } from '@terra-money/wallet-provider';
 import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import { getUpdateTransaction, pollTransaction, TransactionDetails } from 'scripts/Api';
+import { getUpdateTransaction, pollTransaction, TransactionDetails } from 'scripts/api';
 import Modal from './Modal';
 import Loading from 'components/Loading';
-import PlanetEditor from 'scripts/scenes/PlanetEditor';
-import Settings from 'scripts/Settings';
+import PlanetEditor from 'scripts/scenes/planet-editor';
+import Settings from 'scripts/settings';
 
 interface SaveModalProps {
     planetId: string,

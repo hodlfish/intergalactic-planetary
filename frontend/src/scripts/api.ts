@@ -1,7 +1,7 @@
 import { LCDClient, MsgExecuteContract, SimplePublicKey, TxInfo } from '@terra-money/terra.js';
 import { Fee } from '@terra-money/terra.js/dist/core/Fee';
-import Settings from './Settings';
-import { sleep } from './Utility';
+import Settings from './settings';
+import { sleep } from './utility';
 
 const terra = new LCDClient({
     URL: Settings.LCD_URL,

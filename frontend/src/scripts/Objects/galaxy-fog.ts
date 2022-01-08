@@ -1,7 +1,7 @@
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import galaxyFogShader from 'scripts/shaders/GalaxyFogShader';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import galaxyFogShader from 'scripts/shaders/galaxy-fog-shader';
 import * as THREE from 'three';
-import GameObject from 'scripts/engine/GameObject';
+import GameObject from 'scripts/engine/game-object';
 
 export class GalaxyFog extends GameObject {
     material: THREE.Material;

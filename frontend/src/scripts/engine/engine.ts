@@ -1,9 +1,9 @@
 import * as THREE from 'three';
-import Curtain from './Curtain';
-import { CallbackSet } from './Helpers';
-import { Coordinate } from './inputs/Definitions';
-import { KeyboardMouseInputs } from './inputs/KeyboardMouseInputs';
-import { TouchInputs } from './inputs/TouchInputs';
+import Curtain from './curtain';
+import { CallbackSet } from './helpers';
+import { Coordinate } from './inputs/definitions';
+import { KeyboardMouseInputs } from './inputs/keyboard-mouse-inputs';
+import { TouchInputs } from './inputs/touch-inputs';
 
 export const LayerDefinitions = {
     default: 0,

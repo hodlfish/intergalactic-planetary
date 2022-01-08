@@ -5,14 +5,14 @@ import Galaxy from 'pages/Galaxy';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Icons from 'Icons';
 import Menu from 'components/Menu';
-import { getTotalPlanets } from 'scripts/Api';
+import { getTotalPlanets } from 'scripts/api';
 import { setGlobalState } from 'hooks/useGlobalState';
 import SolarSystem from 'pages/SolarSystem';
 import Notifications from 'components/Notifications';
 import Loading from 'components/Loading';
-import { getModelPack, ModelPacks } from 'scripts/ModelLoader';
-import Engine from 'scripts/engine/Engine';
-import Music from 'scripts/Music';
+import { getModelPack, ModelPacks } from 'scripts/model-loader';
+import Engine from 'scripts/engine/engine';
+import Music from 'scripts/music';
 import ExploreMode from 'pages/ExploreMode';
 
 function App() {

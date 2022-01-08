@@ -1,4 +1,4 @@
-import { Coordinate } from "./Definitions";
+import { Coordinate } from "./definitions";
 
 class TouchPointer {
     startEvent: PointerEvent;

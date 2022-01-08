@@ -1,12 +1,12 @@
 import * as THREE from 'three';
-import atmosphereShader from 'scripts/shaders/geoPlanet/AtmosphereShader';
-import { base64ToBinary, binaryToBase64 } from 'scripts/Base64';
+import atmosphereShader from 'scripts/shaders/geoPlanet/atmosphere-shader';
+import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
 import {
     deserializeColor, serializeColor,
     ATMOSPHERE_MIN_HEIGHT, ATMOSPHERE_HEIGHT_RANGE
-} from './Settings';
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import { CallbackSet } from 'scripts/engine/Helpers';
+} from './settings';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import { CallbackSet } from 'scripts/engine/helpers';
 
 export class Atmosphere {
     static SERIALIZED_SIZE = 7;
