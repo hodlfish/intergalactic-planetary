@@ -1,11 +1,11 @@
 import * as THREE from 'three';
-import GameObject from 'scripts/engine/GameObject';
-import Planet from 'scripts/objects/VoxelPlanet';
-import Background from 'scripts/objects/Background';
-import { UpdateState } from 'scripts/engine/Engine';
-import TargetCamera from 'scripts/cameras/TargetCamera';
-import Grid from 'scripts/objects/voxelPlanet/Grid';
-import Terrain from 'scripts/objects/voxelPlanet/Terrain';
+import GameObject from 'scripts/engine/game-object';
+import Planet from 'scripts/objects/voxel-planet';
+import Background from 'scripts/objects/background';
+import { UpdateState } from 'scripts/engine/engine';
+import TargetCamera from 'scripts/cameras/target-camera';
+import Grid from 'scripts/objects/voxel-planet/grid';
+import Terrain from 'scripts/objects/voxel-planet/terrain';
 
 export interface EditorTool {
     name: string,

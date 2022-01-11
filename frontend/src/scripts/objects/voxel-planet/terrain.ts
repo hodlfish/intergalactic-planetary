@@ -1,6 +1,6 @@
-import planetShader from 'scripts/shaders/voxelPlanet/planetShader';
+import planetShader from 'scripts/shaders/voxel-planet/planet-shader';
 import * as THREE from 'three';
-import ColorPalette from "../ColorPalette";
+import ColorPalette from "../color-palette";
 
 class Terrain {
     static GRID_SIZE = 16;

@@ -1,5 +1,5 @@
-import { LayerDefinitions } from 'scripts/engine/Engine';
-import gridShader from 'scripts/shaders/voxelPlanet/gridShader';
+import { LayerDefinitions } from 'scripts/engine/engine';
+import gridShader from 'scripts/shaders/voxel-planet/grid-shader';
 import * as THREE from 'three';
 
 class Grid {

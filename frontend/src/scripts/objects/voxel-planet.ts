@@ -1,7 +1,7 @@
-import GameObject from "scripts/engine/GameObject";
+import GameObject from "scripts/engine/game-object";
 import * as THREE from 'three';
-import ColorPalette from "./ColorPalette";
-import Terrain from "./voxelPlanet/Terrain";
+import ColorPalette from "./color-palette";
+import Terrain from "./voxel-planet/terrain";
 
 class Planet extends GameObject {
     planetScene: THREE.Scene;
