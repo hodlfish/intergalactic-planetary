@@ -1,20 +1,21 @@
 import GameObject from "scripts/engine/game-object";
 import * as THREE from 'three';
 import ColorPalette from "./color-palette";
+import Scenery from "./voxel-planet/scenery";
 import Terrain from "./voxel-planet/terrain";
 
 class Planet extends GameObject {
-    planetScene: THREE.Scene;
+    scenery: Scenery;
     colorPalette: ColorPalette;
     terrain: Terrain;
 
     constructor() {
         super();
-        this.planetScene = new THREE.Scene();
         this.colorPalette = new ColorPalette(6);
         this.terrain = new Terrain(this.colorPalette);
-        this.planetScene.add(this.terrain.mesh);
-        this.scene.add(this.planetScene);
+        this.scenery = new Scenery(this.terrain, this.colorPalette)
+        this.scene.add(this.terrain.mesh);
+        this.scene.add(this.scenery.scene);
     }
 
     serialize(): string {
@@ -28,8 +29,8 @@ class Planet extends GameObject {
     }
 
     dispose() {
-        this.scene.remove(this.planetScene);
         this.terrain.dispose();
+        this.scenery.dispose();
         super.dispose();
     }
 }

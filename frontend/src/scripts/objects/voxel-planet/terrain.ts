@@ -139,6 +139,28 @@ class Terrain {
         }
     }
 
+    getLocationId(point: THREE.Vector3, normal: THREE.Vector3) {
+        const offsetPoint = point.clone().add(normal.clone().multiplyScalar(-Terrain.BLOCK_SIZE / 2));
+        const index = this._voxelCenterToIndex(offsetPoint);
+        console.log(index)
+        if (index) {
+            return Math.floor(index.x + index.z * Terrain.GRID_SIZE + (index.y * Terrain.GRID_SIZE * Terrain.GRID_SIZE)) * 6;
+        } else {
+            return -1;
+        }
+    }
+
+    locationIdToPoint(locationId: number) {
+        const blockId = locationId / 6;
+        const face = locationId % 6;
+        const y = Math.floor(blockId / (Terrain.GRID_SIZE * Terrain.GRID_SIZE));
+        const rem = blockId % (Terrain.GRID_SIZE * Terrain.GRID_SIZE)
+        const z = Math.floor(rem / Terrain.GRID_SIZE);
+        const x = rem % Terrain.GRID_SIZE;
+        const voxelCenter = this._indexToVoxelCenter(x, y, z);
+        return voxelCenter;
+    }
+
     serialize() {
         return false;
     }

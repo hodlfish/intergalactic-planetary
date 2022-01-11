@@ -6,6 +6,8 @@ import { UpdateState } from 'scripts/engine/engine';
 import TargetCamera from 'scripts/cameras/target-camera';
 import Grid from 'scripts/objects/voxel-planet/grid';
 import Terrain from 'scripts/objects/voxel-planet/terrain';
+import { Model, getModel, ModelPacks } from 'scripts/model-loader';
+import Scenery from 'scripts/objects/voxel-planet/scenery';
 
 export interface EditorTool {
     name: string,
@@ -25,6 +27,11 @@ export const EditorTools = {
         name: 'Paint',
         icon: 'brush'
     },
+    items: {
+        name: 'Items',
+        icon: 'tree',
+        description: 'Add scenery'
+    },
     settings: {
         name: 'Settings',
         icon: 'gear'
@@ -39,6 +46,7 @@ class VoxelEditor extends GameObject {
     background: Background;
     color: number;
     cameraController: TargetCamera;
+    model: Model | undefined;
 
     constructor() {
         super();
@@ -54,6 +62,7 @@ class VoxelEditor extends GameObject {
         this.planet = new Planet();
         this.background = new Background(500, 20, 100);
         this.scene.add(this.background.mesh);
+        this.model = ModelPacks[0].models[0];
     }
 
     update(state: UpdateState) {
@@ -113,7 +122,12 @@ class VoxelEditor extends GameObject {
             this.planet.terrain.removeVoxel(intersect.point, intersect.face!.normal);
         } else if (this.tool === EditorTools.paint) {
             this.planet.terrain.paintVoxel(intersect.point, intersect.face!.normal, this.color);
-        }
+        } else if (this.tool === EditorTools.items && this.model) {
+            const locationId = this.planet.terrain.getLocationId(intersect.point, intersect.face!.normal);
+            if (locationId > -1) {
+                this.planet.scenery.addScenery(this.model.id, this.color, locationId);
+            }
+        } 
     }
 
     isUnsaved() {
