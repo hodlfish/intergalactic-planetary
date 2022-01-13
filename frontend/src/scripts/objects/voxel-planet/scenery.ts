@@ -31,6 +31,7 @@ export class Scenery {
 
     constructor(terrain: Terrain, colorPalette: ColorPalette) {
         this.terrain = terrain;
+        // TODO: When terrain is edited, validate scenery is still placeable.
         // this.terrain.onAfterChange.addListener(this, () => {
         //     this.refresh();
         // });
@@ -157,7 +158,6 @@ export class Scenery {
         }
         const geometry = getModel(this.modelPack.id, model.id);
         if (geometry) {
-            console.log(geometry)
             geometry.computeVertexNormals();
             const objectMesh = new THREE.InstancedMesh(
                 geometry,
@@ -165,15 +165,13 @@ export class Scenery {
                 objectInstances.length
             );
             objectMesh.updateMatrixWorld();
-            // const quaternion = new THREE.Quaternion();
+            const quaternion = new THREE.Quaternion();
             const transform = new THREE.Object3D();
             objectInstances.forEach((objInstance, index) => {
-                const objectPosition = this.terrain.locationIdToPoint(objInstance.locationId);
-                const pos = new THREE.Vector3(objectPosition.x, objectPosition.y, objectPosition.z);
-                transform.position.set(...pos.toArray());
-                // pos.normalize();
-                // transform.setRotationFromQuaternion(quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), pos));
-                // transform.rotateOnWorldAxis(pos, 2 * Math.PI * GalacticSpec.noise(objInstance.locationId));
+                const position = this.terrain.locationIdToPosition(objInstance.locationId);
+                transform.position.set(...position.point.toArray());
+                transform.setRotationFromQuaternion(quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0), position.normal));
+                transform.rotateOnWorldAxis(position.normal, 2 * Math.PI * GalacticSpec.noise(objInstance.locationId));
                 transform.updateMatrix();
                 objectMesh.setMatrixAt( index, transform.matrix );
                 const colFloat = objInstance.colorId / 6.0;

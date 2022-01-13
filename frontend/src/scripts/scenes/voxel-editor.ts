@@ -123,7 +123,7 @@ class VoxelEditor extends GameObject {
         } else if (this.tool === EditorTools.paint) {
             this.planet.terrain.paintVoxel(intersect.point, intersect.face!.normal, this.color);
         } else if (this.tool === EditorTools.items && this.model) {
-            const locationId = this.planet.terrain.getLocationId(intersect.point, intersect.face!.normal);
+            const locationId = this.planet.terrain.pointToLocationId(intersect.point, intersect.face!.normal);
             if (locationId > -1) {
                 this.planet.scenery.addScenery(this.model.id, this.color, locationId);
             }

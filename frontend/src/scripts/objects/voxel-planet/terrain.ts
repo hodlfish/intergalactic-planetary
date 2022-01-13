@@ -93,7 +93,7 @@ class Terrain {
                     if (k + 1 >= Terrain.GRID_SIZE || this.depthField[i][j][k+1] === Terrain.EMPTY_ID) {
                         faces.push(0);
                     }
-                    const voxelCenter = this._indexToVoxelCenter(i, j, k);
+                    const voxelCenter = this.coordinateToPosition(i, j, k);
                     faces.forEach(face => {
                         const vertexIndices = this._faces[face];
                         vertexIndices.forEach(vertexIndex => {
@@ -114,71 +114,69 @@ class Terrain {
 
     attachVoxel(point: THREE.Vector3, normal: THREE.Vector3, colorId: number) {
         const offsetPoint = point.clone().add(normal.clone().multiplyScalar(Terrain.BLOCK_SIZE / 2));
-        const index = this._voxelCenterToIndex(offsetPoint);
-        if (index) {
-            this.depthField[index.x][index.y][index.z] = colorId;
+        const coord = this.positionToCoordinate(offsetPoint);
+        if (coord) {
+            this.depthField[coord.x][coord.y][coord.z] = colorId;
             this.generate();
         }
     }
 
     removeVoxel(point: THREE.Vector3, normal: THREE.Vector3) {
         const offsetPoint = point.clone().add(normal.clone().multiplyScalar(-Terrain.BLOCK_SIZE / 2));
-        const index = this._voxelCenterToIndex(offsetPoint);
-        if (index) {
-            this.depthField[index.x][index.y][index.z] = Terrain.EMPTY_ID;
+        const coord = this.positionToCoordinate(offsetPoint);
+        if (coord) {
+            this.depthField[coord.x][coord.y][coord.z] = Terrain.EMPTY_ID;
             this.generate();
         }
     }
 
     paintVoxel(point: THREE.Vector3, normal: THREE.Vector3, colorId: number) {
         const offsetPoint = point.clone().add(normal.clone().multiplyScalar(-Terrain.BLOCK_SIZE / 2));
-        const index = this._voxelCenterToIndex(offsetPoint);
-        if (index) {
-            this.depthField[index.x][index.y][index.z] = colorId;
+        const coord = this.positionToCoordinate(offsetPoint);
+        if (coord) {
+            this.depthField[coord.x][coord.y][coord.z] = colorId;
             this.generate();
         }
     }
 
-    getLocationId(point: THREE.Vector3, normal: THREE.Vector3) {
+    pointToLocationId(point: THREE.Vector3, normal: THREE.Vector3) {
         const offsetPoint = point.clone().add(normal.clone().multiplyScalar(-Terrain.BLOCK_SIZE / 2));
-        const index = this._voxelCenterToIndex(offsetPoint);
-        console.log(index)
-        if (index) {
-            return Math.floor(index.x + index.z * Terrain.GRID_SIZE + (index.y * Terrain.GRID_SIZE * Terrain.GRID_SIZE)) * 6;
+        const coord = this.positionToCoordinate(offsetPoint);
+        const normalIndex = this._normals.findIndex(norm => norm.equals(normal));
+        if (coord) {
+            return this.coordinateToLocationId(coord) + normalIndex;
         } else {
             return -1;
         }
     }
 
-    locationIdToPoint(locationId: number) {
-        const blockId = locationId / 6;
+    coordinateToLocationId(coord: THREE.Vector3) {
+        return Math.floor(coord.x + coord.z * Terrain.GRID_SIZE + (coord.y * Terrain.GRID_SIZE * Terrain.GRID_SIZE)) * 6;
+    }
+
+    locationIdToPosition(locationId: number) {
+        const blockId = Math.floor(locationId / 6);
         const face = locationId % 6;
+        const normal = this._normals[face];
         const y = Math.floor(blockId / (Terrain.GRID_SIZE * Terrain.GRID_SIZE));
         const rem = blockId % (Terrain.GRID_SIZE * Terrain.GRID_SIZE)
         const z = Math.floor(rem / Terrain.GRID_SIZE);
         const x = rem % Terrain.GRID_SIZE;
-        const voxelCenter = this._indexToVoxelCenter(x, y, z);
-        return voxelCenter;
+        const voxelCenter = this.coordinateToPosition(x, y, z);
+        voxelCenter.add(normal.clone().multiplyScalar(Terrain.BLOCK_SIZE / 2))
+        return {
+            point: voxelCenter,
+            normal: normal
+        };
     }
 
-    serialize() {
-        return false;
+    coordinateToPosition(x: number, y: number, z: number) {
+        return new THREE.Vector3(x, y, z)
+            .addScalar(-Terrain.GRID_SIZE / 2 + 0.5)
+            .multiplyScalar(Terrain.BLOCK_SIZE);
     }
 
-    deserialize(data: string) {
-        console.log(data);
-        return false;
-    }
-
-    _indexToVoxelCenter(x: number, y: number, z: number) {
-        return new THREE.Vector3(
-            x + 0.5 - Terrain.GRID_SIZE / 2,
-            y + 0.5 - Terrain.GRID_SIZE / 2,
-            z + 0.5 - Terrain.GRID_SIZE / 2
-        ).multiplyScalar(Terrain.BLOCK_SIZE);
-    }
-
-    _voxelCenterToIndex(point: THREE.Vector3): THREE.Vector3 | undefined {
+    positionToCoordinate(point: THREE.Vector3): THREE.Vector3 | undefined {
         const indexPoint = point.clone().multiplyScalar(1/Terrain.BLOCK_SIZE).addScalar(-0.5 + Terrain.GRID_SIZE / 2);
         indexPoint.x = +Math.round(indexPoint.x);
         indexPoint.y = +Math.round(indexPoint.y);
@@ -191,6 +189,15 @@ class Terrain {
             }
         }
         return indexPoint;
+    }
+
+    serialize() {
+        return false;
+    }
+
+    deserialize(data: string) {
+        console.log(data);
+        return false;
     }
 
     dispose() {
