@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { Model, ModelPacks } from 'scripts/model-loader';
 import VoxelEditor, { EditorTool, EditorTools } from 'scripts/scenes/voxel-editor';
+import { naturalSort } from 'scripts/utility';
 
 interface ToolbarProps {
     editor: VoxelEditor
@@ -16,6 +18,7 @@ function VoxelToolbar(props: ToolbarProps) {
     const [hideToolSettings, setHideToolSettings] = useState<boolean>(false);
     const [selectedTool, setSelectedTool] = useState<EditorTool | undefined>(defaults.tool);
     const [selectedColor, setSelectedColor] = useState<number>(0);
+    const [selectedObject, setSelectedObject] = useState<Model | undefined>(undefined);
     const [colorPalette, setColorPalette] = useState<string[]>([]);
 
     useEffect(() => {
@@ -85,6 +88,15 @@ function VoxelToolbar(props: ToolbarProps) {
         if (!selectedTool || hideToolSettings) {
             return '';
         }
+        if (selectedTool === EditorTools.items) {
+            return (
+                <div id="scenery-items">
+                    {ModelPacks[0].models.sort((a, b) => naturalSort(a.sort, b.sort)).map(model =>
+                        <div key={model.id} className={`scenery-item ${selectedObject === model ? 'selected' : ''}`} onClick={() => onSetSelectedObject(model)}>{model.name}</div>
+                    )}
+                </div>
+            );
+        }
         return (
             <React.Fragment>
                 {(selectedTool === EditorTools.settings) &&
@@ -118,8 +130,13 @@ function VoxelToolbar(props: ToolbarProps) {
         );
     }
 
+    const onSetSelectedObject = (model: Model) => {
+        setSelectedObject(model);
+        editor.model = model;
+    }
+
     return (
-        <div id="ico-toolbar-component">
+        <div id="vox-toolbar-component">
             <div id="toolbar">
                 {renderToolTitle()}
                 {renderColors()}

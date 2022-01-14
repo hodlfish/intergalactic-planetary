@@ -1,0 +1,244 @@
+#vox-toolbar-component {
+    @include bottom-panel;
+    pointer-events: none;
+
+    #toolbar {
+        position: relative;
+        pointer-events: all;
+        display: grid;
+        grid-template-columns: 1fr max-content;
+        grid-template-rows: min-content min-content;
+        grid-template-areas:
+            "settings colors"
+            "tools tools";
+        border-radius: 10px;
+        margin: auto;
+        background-color: $bg-1;
+        max-width: 1000px;
+        min-width: 320px;
+    
+        .tool-item {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: solid 1px $icon-primary;
+            color: $txt-primary;
+            stroke: $icon-primary;
+            margin: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 12px;
+
+            svg {
+                width: 34px;
+                height: 34px;
+            }
+
+            .tooltip {
+                @include display-panel;
+                display: none; 
+                position: absolute;
+                width: max-content;
+                z-index: 1;
+                top: -40px;
+                text-align: center;
+                border-radius: 6px;
+                padding: 5px;
+            }
+
+            @media (hover: hover) and (pointer: fine) {
+                &:hover {
+                    background-color: $txt-primary;
+                    stroke: $bg-1;
+
+                    .tooltip {
+                        display: block;
+                    }
+                }
+            }
+        }
+    
+        .tool-item.selected {
+            background-color: $icon-primary;
+            color: $bg-1;
+            stroke: $bg-1;
+        }
+
+        .tool {
+            margin: auto;
+            display: grid;
+
+            label { 
+                margin: 10px;
+                color: white;
+                margin: auto;
+            }
+
+            input {
+                margin: auto;
+            }
+        
+            input[type=range]
+            {
+                width: 120px;
+            }
+        
+            input[type=number] {
+                width: 40px;
+                height: 40px;
+                margin: 10px;
+                border-radius: 6px;
+            }
+        }
+
+        #tool-list {
+            grid-area: tools;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+    
+        #tool-colors {
+            grid-area: colors;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            min-height: 60px;
+            max-width: 160px;
+            border-width: 0px 0px 1px 1px;
+            border-style: solid;
+            border-color: $bg1-shadow;
+        
+            .color-item {
+                margin: 10px;
+                width: 30px;
+                height: 30px;
+                border-radius: 15px;
+                cursor: pointer;
+            }
+        
+            .color-item.selected {
+                box-sizing: border-box;
+                border: solid 2px white;
+            }
+        }
+
+        #title {
+            display: flex;
+            position: absolute;
+            top: -40px;
+            left: 20px;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            line-height: 40px;
+            padding: 0px 20px;
+            background-color: $bg-1-dark;
+            border-radius: 10px 10px 0px 0px;
+            box-sizing: border-box;
+            height: 40px;
+            width: max-content;
+            cursor: pointer;
+
+            .error {
+                color: $txt-error;
+            }
+
+            svg {
+                margin: auto 10px auto 0px;
+                stroke: white;
+            }
+        }
+
+        #scenery-items {
+            max-height: 190px;
+            overflow: auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+
+            .scenery-item {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                width: 40px;
+                height: 24px;
+                border: solid 1px $icon-primary;
+                color: $txt-primary;
+                margin: 6px;
+                padding: 10px;
+                font-size: 12px;
+                text-align: center;
+                cursor: pointer;
+                border-radius: 12px;
+
+                @media (hover: hover) and (pointer: fine) {
+                    &:hover {
+                        background-color: $icon-primary;
+                        color: $bg-1;
+                    }
+                }
+            }
+        
+            .scenery-item.selected {
+                background-color: $icon-primary;
+                color: $bg-1;
+            }
+        }
+    
+        #tool-settings {
+            grid-area: settings;
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+            border-width: 0px 0px 1px 0px;
+            border-style: solid;
+            border-color: $bg1-shadow;
+        }
+
+        .color-picker {
+            display: grid;
+            width: 50px;
+            height: 50px;
+            position: relative;
+
+            svg {
+                width: 24px;
+                height: 24px;
+                left: 0px;
+                right: 0px;
+                top: 0px;
+                bottom: 0px;
+                position: absolute;
+                margin: auto;
+                stroke: white;
+                pointer-events: none;
+            }
+
+            input[type=color] {
+                width: 30px;
+                height: 30px;
+                margin: 10px;
+                margin: auto;
+            }
+            input[type=color]::-webkit-color-swatch-wrapper {
+                padding: 0;
+            }
+            input[type=color]::-webkit-color-swatch {
+                border: none;
+            }
+        }
+    }
+}

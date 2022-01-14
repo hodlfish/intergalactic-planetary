@@ -1,5 +1,4 @@
 import * as THREE from 'three';
-import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
 import sceneryShader from 'scripts/shaders/voxel-planet/scenery-shader';
 import ColorPalette from '../color-palette';
 import Terrain from './terrain';
@@ -32,9 +31,9 @@ export class Scenery {
     constructor(terrain: Terrain, colorPalette: ColorPalette) {
         this.terrain = terrain;
         // TODO: When terrain is edited, validate scenery is still placeable.
-        // this.terrain.onAfterChange.addListener(this, () => {
-        //     this.refresh();
-        // });
+        this.terrain.onAfterChange.addListener(this, () => {
+            this.validateScenery();
+        });
         this.colorPalette = colorPalette;
         this.colorPalette.onAfterChange.addListener(this, (colors: THREE.Color[]) => {
             this.onColorPaletteChange(colors);
@@ -65,6 +64,19 @@ export class Scenery {
         // this.onAfterChange.call();
     }
 
+    validateScenery() {
+        let needsRefresh = false;
+        Array.from(this.locationSceneryMap.keys()).forEach(key => {
+            if(!this.terrain.isValidLocationId(Math.floor(key))) {
+                this.locationSceneryMap.delete(key);
+                needsRefresh = true;
+            }
+        });
+        if (needsRefresh) {
+            this.refresh();
+        }
+    }
+
     get count(): number {
         return this.locationSceneryMap.size;
     }
@@ -82,7 +94,6 @@ export class Scenery {
     }
 
     addScenery(objectId: number, colorId: number, locationIds: number | number[]) {
-        objectId = 1;
         this.emitBeforeUpdate();
         if (Array.isArray(locationIds)) {
             let needsRefresh = false;
@@ -187,7 +198,6 @@ export class Scenery {
             this.sceneryMeshMap.set(model.id, objectMesh);
             this.scene.add(objectMesh);
         }
-        console.log(this.locationSceneryMap)
     }
 
     serialize() {
@@ -226,6 +236,7 @@ export class Scenery {
         // }
         // this.refresh();
         // return true;
+        this.validateScenery();
     }
 
     dispose() {

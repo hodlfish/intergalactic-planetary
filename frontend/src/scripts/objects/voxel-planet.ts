@@ -18,6 +18,10 @@ class Planet extends GameObject {
         this.scene.add(this.scenery.scene);
     }
 
+    update() {
+        this.scenery.animate();
+    }
+
     serialize(): string {
         return 'VOX1=' + 
             this.terrain.serialize();

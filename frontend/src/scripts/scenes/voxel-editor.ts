@@ -8,6 +8,7 @@ import Grid from 'scripts/objects/voxel-planet/grid';
 import Terrain from 'scripts/objects/voxel-planet/terrain';
 import { Model, getModel, ModelPacks } from 'scripts/model-loader';
 import Scenery from 'scripts/objects/voxel-planet/scenery';
+import { Intersection } from 'three';
 
 export interface EditorTool {
     name: string,
@@ -47,6 +48,7 @@ class VoxelEditor extends GameObject {
     color: number;
     cameraController: TargetCamera;
     model: Model | undefined;
+    pressDownIntersect: Intersection | undefined;
 
     constructor() {
         super();
@@ -62,7 +64,7 @@ class VoxelEditor extends GameObject {
         this.planet = new Planet();
         this.background = new Background(500, 20, 100);
         this.scene.add(this.background.mesh);
-        this.model = ModelPacks[0].models[0];
+        this.model = undefined;
     }
 
     update(state: UpdateState) {
@@ -101,15 +103,20 @@ class VoxelEditor extends GameObject {
         const cursorPosition = state.keyboardMouse.position.screenCoordinates.toArray();
         const intersects = this.engine.raycastObjects(cursorPosition, [this.planet.terrain.mesh, this.grid.mesh]);
 
-        if (state.keyboardMouse.inputStates.get('left-click')) {
-            if (state.keyboardMouse.inputEvents.includes('left-click-down') && this.tool && intersects.length > 0) {
-                this.cameraController.setEnabled(false);
+        if (state.keyboardMouse.inputEvents.includes('left-click-down')) {
+            if (intersects.length > 0) {
+                this.pressDownIntersect = intersects[0];
                 this.isDrawing = true;
-                this.edit(intersects[0]);
+                this.cameraController.setEnabled(false);
+            } else {
+                this.pressDownIntersect = undefined;
             }
         }
 
         if(state.keyboardMouse.inputEvents.includes('left-click-up')) {
+            if (intersects.length > 0 && this.pressDownIntersect) {
+                this.edit(intersects[0]);
+            }
             this.cameraController.setEnabled(true);
             this.isDrawing = false;
         }
@@ -117,9 +124,17 @@ class VoxelEditor extends GameObject {
 
     edit(intersect: THREE.Intersection) {
         if (this.tool === EditorTools.add) {
-            this.planet.terrain.attachVoxel(intersect.point, intersect.face!.normal, this.color);
+            const start = this.planet.terrain.pointToCoord(this.pressDownIntersect!.point, this.pressDownIntersect!.face!.normal);
+            const end = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal);
+            if (start && end) {
+                this.planet.terrain.attachVoxel(start, end, this.color);
+            }
         } else if (this.tool === EditorTools.remove) {
-            this.planet.terrain.removeVoxel(intersect.point, intersect.face!.normal);
+            const start = this.planet.terrain.pointToCoord(this.pressDownIntersect!.point, this.pressDownIntersect!.face!.normal, true);
+            const end = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal, true);
+            if (start && end) {
+                this.planet.terrain.removeVoxel(start, end);
+            }
         } else if (this.tool === EditorTools.paint) {
             this.planet.terrain.paintVoxel(intersect.point, intersect.face!.normal, this.color);
         } else if (this.tool === EditorTools.items && this.model) {

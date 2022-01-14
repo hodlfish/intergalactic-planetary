@@ -1,42 +1,39 @@
+import { CallbackSet } from 'scripts/engine/helpers';
 import planetShader from 'scripts/shaders/voxel-planet/planet-shader';
 import * as THREE from 'three';
 import ColorPalette from "../color-palette";
+import { COLOR_PALETTE_SIZE } from './settings';
 
 class Terrain {
     static GRID_SIZE = 16;
     static WIDTH = 5.0;
     static BLOCK_SIZE = Terrain.WIDTH / Terrain.GRID_SIZE;
-    static WATER_ID = 8;
-    static EMPTY_ID = 9;
+    static WATER_ID = 6;
+    static EMPTY_ID = 7;
+    static MIN_GRID = new THREE.Vector3(0, 0, 0);
+    static MAX_GRID = new THREE.Vector3(Terrain.GRID_SIZE - 1, Terrain.GRID_SIZE - 1, Terrain.GRID_SIZE - 1);
 
     colorPalette: ColorPalette;
     mesh: THREE.Mesh;
     geometry: THREE.BufferGeometry;
     material: THREE.ShaderMaterial;
     depthField: number[][][];
+    onBeforeChange: CallbackSet;
+    onAfterChange: CallbackSet;
 
     constructor(colorPalette: ColorPalette) {
+        this.onBeforeChange = new CallbackSet();
+        this.onAfterChange = new CallbackSet();
+
+        // Color Palette
         this.colorPalette = colorPalette;
         this.colorPalette.onAfterChange.addListener(this, (colors: THREE.Color[]) => {
             this.onColorPaletteChange(colors);
         })
-        this.depthField = [];
-        const center = new THREE.Vector3(
-            Terrain.GRID_SIZE / 2.0,
-            Terrain.GRID_SIZE / 2.0,
-            Terrain.GRID_SIZE / 2.0
-        );
-        for(let i = 0; i < Terrain.GRID_SIZE; i++) {
-            this.depthField.push([]);
-            for(let j = 0; j < Terrain.GRID_SIZE; j++) {
-                this.depthField[i].push([]);
-                for(let k = 0; k < Terrain.GRID_SIZE; k++) {
-                    const position = new THREE.Vector3(i + 0.5, j + 0.5, k + 0.5);
-                    this.depthField[i][j].push(position.distanceTo(center) < Math.round(Terrain.GRID_SIZE / 2) ? 0 : Terrain.EMPTY_ID);
-                }
-            }
-        }
 
+        // Planet Mesh
+        this.depthField = [];
+        this.generateSphere();
         this.geometry = new THREE.BufferGeometry();
         this.material = new THREE.ShaderMaterial(
             {
@@ -52,6 +49,24 @@ class Terrain {
         this.generate();
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.onColorPaletteChange(this.colorPalette.colors);
+    }
+
+    generateSphere() {
+        const center = new THREE.Vector3(
+            Terrain.GRID_SIZE / 2.0,
+            Terrain.GRID_SIZE / 2.0,
+            Terrain.GRID_SIZE / 2.0
+        );
+        for(let i = 0; i < Terrain.GRID_SIZE; i++) {
+            this.depthField.push([]);
+            for(let j = 0; j < Terrain.GRID_SIZE; j++) {
+                this.depthField[i].push([]);
+                for(let k = 0; k < Terrain.GRID_SIZE; k++) {
+                    const position = new THREE.Vector3(i + 0.5, j + 0.5, k + 0.5);
+                    this.depthField[i][j].push(position.distanceTo(center) < Math.round(Terrain.GRID_SIZE / 2) ? 0 : Terrain.EMPTY_ID);
+                }
+            }
+        }
     }
 
     onColorPaletteChange(colors: THREE.Color[]) {
@@ -73,7 +88,7 @@ class Terrain {
                         continue;
                     }
                     const colorId = this.depthField[i][j][k];
-                    const vertColor = colorId / 8.0;
+                    const vertColor = colorId / COLOR_PALETTE_SIZE;
                     const faces = [];
                     if (i - 1 < 0 || this.depthField[i-1][j][k] === Terrain.EMPTY_ID) {
                         faces.push(3);
@@ -112,22 +127,42 @@ class Terrain {
         this.geometry.computeBoundingSphere();
     }
 
-    attachVoxel(point: THREE.Vector3, normal: THREE.Vector3, colorId: number) {
-        const offsetPoint = point.clone().add(normal.clone().multiplyScalar(Terrain.BLOCK_SIZE / 2));
-        const coord = this.positionToCoordinate(offsetPoint);
-        if (coord) {
-            this.depthField[coord.x][coord.y][coord.z] = colorId;
-            this.generate();
+    emitBeforeUpdate() {
+        this.onBeforeChange.call();
+    }
+
+    emitAfterUpdate() {
+        this.onAfterChange.call();
+    }
+
+    _performBlockAction(startCoord: THREE.Vector3, endCoord: THREE.Vector3, callback: (x: number, y: number, z: number) => any) {
+        for(let i = Math.min(startCoord.x, endCoord.x); i <= Math.max(startCoord.x, endCoord.x); i++) {
+            for(let j = Math.min(startCoord.y, endCoord.y); j <= Math.max(startCoord.y, endCoord.y); j++) {
+                for(let k = Math.min(startCoord.z, endCoord.z); k <= Math.max(startCoord.z, endCoord.z); k++) {
+                    callback(i, j, k);
+                }
+            }
         }
     }
 
-    removeVoxel(point: THREE.Vector3, normal: THREE.Vector3) {
-        const offsetPoint = point.clone().add(normal.clone().multiplyScalar(-Terrain.BLOCK_SIZE / 2));
-        const coord = this.positionToCoordinate(offsetPoint);
-        if (coord) {
-            this.depthField[coord.x][coord.y][coord.z] = Terrain.EMPTY_ID;
+    attachVoxel(startCoord: THREE.Vector3, endCoord: THREE.Vector3, colorId: number) {
+        if (startCoord && endCoord) {
+            this._performBlockAction(startCoord, endCoord, (x, y, z) => {
+                this.depthField[x][y][z] = colorId;
+            });
             this.generate();
         }
+        this.emitAfterUpdate();
+    }
+
+    removeVoxel(startCoord: THREE.Vector3, endCoord: THREE.Vector3) {
+        if (startCoord && endCoord) {
+            this._performBlockAction(startCoord, endCoord, (x, y, z) => {
+                this.depthField[x][y][z] = Terrain.EMPTY_ID;
+            });
+            this.generate();
+        }
+        this.emitAfterUpdate();
     }
 
     paintVoxel(point: THREE.Vector3, normal: THREE.Vector3, colorId: number) {
@@ -137,6 +172,12 @@ class Terrain {
             this.depthField[coord.x][coord.y][coord.z] = colorId;
             this.generate();
         }
+        this.emitAfterUpdate();
+    }
+
+    pointToCoord(point: THREE.Vector3, normal: THREE.Vector3, reverse = false) {
+        const offsetPoint = point.clone().add(normal.clone().multiplyScalar(Terrain.BLOCK_SIZE / 2 * (reverse ? -1 : 1)));
+        return this.positionToCoordinate(offsetPoint);
     }
 
     pointToLocationId(point: THREE.Vector3, normal: THREE.Vector3) {
@@ -155,6 +196,16 @@ class Terrain {
     }
 
     locationIdToPosition(locationId: number) {
+        const coord = this.locationIdToCoord(locationId);
+        const voxelCenter = this.coordinateToPosition(coord.x, coord.y, coord.z);
+        voxelCenter.add(coord.normal.clone().multiplyScalar(Terrain.BLOCK_SIZE / 2))
+        return {
+            point: voxelCenter,
+            normal: coord.normal
+        };
+    }
+
+    locationIdToCoord(locationId: number) {
         const blockId = Math.floor(locationId / 6);
         const face = locationId % 6;
         const normal = this._normals[face];
@@ -162,12 +213,26 @@ class Terrain {
         const rem = blockId % (Terrain.GRID_SIZE * Terrain.GRID_SIZE)
         const z = Math.floor(rem / Terrain.GRID_SIZE);
         const x = rem % Terrain.GRID_SIZE;
-        const voxelCenter = this.coordinateToPosition(x, y, z);
-        voxelCenter.add(normal.clone().multiplyScalar(Terrain.BLOCK_SIZE / 2))
         return {
-            point: voxelCenter,
-            normal: normal
-        };
+            x:x, y:y, z:z, face:face, normal:normal
+        }
+    }
+
+    isValidLocationId(locationId: number) {
+        const coord = this.locationIdToCoord(locationId);
+        if(this.depthField[coord.x][coord.y][coord.z] === Terrain.EMPTY_ID) {
+            return false;
+        }
+        const current = new THREE.Vector3(coord.x, coord.y, coord.z);
+        const neighbor = new THREE.Vector3(coord.x, coord.y, coord.z).add(coord.normal).clamp(
+            Terrain.MIN_GRID, Terrain.MAX_GRID
+        )
+        if (current.equals(neighbor)) {
+            return true;
+        } else if (![Terrain.EMPTY_ID, Terrain.WATER_ID].includes(this.depthField[neighbor.x][neighbor.y][neighbor.z])) {
+            return false;
+        }
+        return true;
     }
 
     coordinateToPosition(x: number, y: number, z: number) {
@@ -181,14 +246,7 @@ class Terrain {
         indexPoint.x = +Math.round(indexPoint.x);
         indexPoint.y = +Math.round(indexPoint.y);
         indexPoint.z = +Math.round(indexPoint.z);
-        const values = indexPoint.toArray();
-        for(let i = 0; i < values.length; i++) {
-            const value = values[i];
-            if (value < 0 || value > Terrain.GRID_SIZE - 1) {
-                return undefined;
-            }
-        }
-        return indexPoint;
+        return indexPoint.round().clamp(Terrain.MIN_GRID, Terrain.MAX_GRID);
     }
 
     serialize() {
