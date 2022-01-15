@@ -23,6 +23,7 @@ function VoxelToolbar(props: ToolbarProps) {
 
     useEffect(() => {
         setColorPalette(editor.planet.colorPalette.colors.map(c => `#${c.getHexString()}`));
+        console.log(editor.planet.colorPalette.colors)
         editor.planet.colorPalette.onAfterChange.addListener('TOOLBAR', (colors: any[]) => setColorPalette(colors.map(c => `#${c.getHexString()}`)));
     }, [editor])
 

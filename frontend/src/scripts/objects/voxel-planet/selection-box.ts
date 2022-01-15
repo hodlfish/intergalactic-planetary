@@ -1,28 +1,22 @@
 import { LayerDefinitions } from 'scripts/engine/engine';
+import GameObject from 'scripts/engine/game-object';
 import gridShader from 'scripts/shaders/voxel-planet/grid-shader';
 import * as THREE from 'three';
 
-class Grid {
+class SelectionBox extends GameObject {
     size: number;
     width: number;
     mesh: THREE.Mesh;
-
-    scene: THREE.Scene;
     _visible: boolean;
 
     constructor(size: number, width: number) {
+        super();
         this.size = size;
         this.width = width;
-        this.scene = new THREE.Scene();
-        this._visible = true;
-        const geometry = new THREE.BoxGeometry(width, width, width, 1, 1);
-        const positions = geometry.getAttribute('position');
-        const inversePositions = Array.from(positions.array).map(norm => -norm);
-        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(inversePositions), 3));
+        this._visible = false;
         
-
         this.mesh = new THREE.Mesh(
-            geometry,
+            new THREE.BoxGeometry(),
             new THREE.ShaderMaterial(
                 {
                     uniforms: {
@@ -32,7 +26,10 @@ class Grid {
                     },
                     vertexShader : gridShader.vertex,
                     fragmentShader : gridShader.fragment,
-                    transparent: true
+                    transparent: true,
+                    polygonOffset: true,
+                    polygonOffsetUnits: -1,
+                    polygonOffsetFactor: -1
                 }
             )
         );
@@ -40,18 +37,25 @@ class Grid {
         this.scene.add(this.mesh);
     }
 
+    setSelection(position: THREE.Vector3, scale: THREE.Vector3) {
+        this.mesh.position.set(...position.toArray());
+        this.mesh.scale.set(...scale.toArray());
+    }
+
     get visible() {
         return this._visible;
     }
 
     set visible(value: boolean) {
+        this.mesh.visible = value;
         this._visible = value;
     }
 
     dispose() {
         (this.mesh.material as THREE.ShaderMaterial).dispose();
         this.mesh.geometry.dispose();
+        this.scene.remove(this.mesh);
     }
 }
 
-export default Grid;
+export default SelectionBox;

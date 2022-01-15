@@ -1,1 +1,1 @@
-export const COLOR_PALETTE_SIZE = 6;
+export const COLOR_PALETTE_SIZE = 15;

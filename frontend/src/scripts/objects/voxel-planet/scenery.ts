@@ -6,6 +6,7 @@ import Engine, { LayerDefinitions } from 'scripts/engine/engine';
 import { getModel, ModelPacks } from 'scripts/model-loader';
 import GalacticSpec from 'scripts/galactic-spec';
 import { CallbackSet } from 'scripts/engine/helpers';
+import { COLOR_PALETTE_SIZE } from './settings';
 
 interface SceneryInstance {
     objectId: number;
@@ -53,7 +54,7 @@ export class Scenery {
             fragmentShader : sceneryShader.fragment
         });
         // this.onBeforeChange = new CallbackSet();
-        // this.onAfterChange = new CallbackSet();
+        // this.onAfterChange = new CallmbackSet();
     }
 
     emitBeforeUpdate() {
@@ -185,7 +186,7 @@ export class Scenery {
                 transform.rotateOnWorldAxis(position.normal, 2 * Math.PI * GalacticSpec.noise(objInstance.locationId));
                 transform.updateMatrix();
                 objectMesh.setMatrixAt( index, transform.matrix );
-                const colFloat = objInstance.colorId / 6.0;
+                const colFloat = objInstance.colorId / COLOR_PALETTE_SIZE;
                 objectMesh.setColorAt(index, new THREE.Color(colFloat, colFloat, colFloat));
             });
 

@@ -9,6 +9,7 @@ import Terrain from 'scripts/objects/voxel-planet/terrain';
 import { Model, getModel, ModelPacks } from 'scripts/model-loader';
 import Scenery from 'scripts/objects/voxel-planet/scenery';
 import { Intersection } from 'three';
+import SelectionBox from 'scripts/objects/voxel-planet/selection-box';
 
 export interface EditorTool {
     name: string,
@@ -42,6 +43,7 @@ export const EditorTools = {
 class VoxelEditor extends GameObject {
     isDrawing: boolean;
     grid: Grid;
+    selectionBox: SelectionBox;
     planet: Planet;
     tool: EditorTool | undefined;
     background: Background;
@@ -53,6 +55,7 @@ class VoxelEditor extends GameObject {
     constructor() {
         super();
         this.grid = new Grid(Terrain.GRID_SIZE, Terrain.WIDTH);
+        this.selectionBox = new SelectionBox(1, Terrain.WIDTH);
         this.grid.visible = true;
         this.color = 0;
         this.isDrawing = false;
@@ -103,6 +106,13 @@ class VoxelEditor extends GameObject {
         const cursorPosition = state.keyboardMouse.position.screenCoordinates.toArray();
         const intersects = this.engine.raycastObjects(cursorPosition, [this.planet.terrain.mesh, this.grid.mesh]);
 
+        if (intersects.length > 0) {
+            this.selectionBox.visible = true;
+            this.select(intersects[0]);
+        } else {
+            this.selectionBox.visible = false;
+        }
+
         if (state.keyboardMouse.inputEvents.includes('left-click-down')) {
             if (intersects.length > 0) {
                 this.pressDownIntersect = intersects[0];
@@ -119,6 +129,37 @@ class VoxelEditor extends GameObject {
             }
             this.cameraController.setEnabled(true);
             this.isDrawing = false;
+            this.pressDownIntersect = undefined;
+        }
+    }
+
+    select(intersect: THREE.Intersection) {
+        let startPosition = undefined;
+        let curPosition = undefined;
+        if (this.tool === EditorTools.add) {
+            const curCoord = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal);
+            curPosition = this.planet.terrain.coordinateToPosition(...curCoord.toArray());
+            if (this.pressDownIntersect) {
+                const startCoord = this.planet.terrain.pointToCoord(this.pressDownIntersect.point, this.pressDownIntersect.face!.normal);
+                startPosition = this.planet.terrain.coordinateToPosition(...startCoord.toArray());
+            }
+        } else {
+            const end = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal, true);
+            curPosition = this.planet.terrain.coordinateToPosition(end.x, end.y, end.z);
+            if (this.pressDownIntersect) {
+                const startCoord = this.planet.terrain.pointToCoord(this.pressDownIntersect.point, this.pressDownIntersect.face!.normal, true);
+                startPosition = this.planet.terrain.coordinateToPosition(...startCoord.toArray());
+            }
+        }
+        if (startPosition) {
+            const midPoint = startPosition.clone().add(curPosition).multiplyScalar(0.5);
+            const scale = startPosition.clone().sub(curPosition);
+            scale.x = Math.abs(scale.x) + Terrain.BLOCK_SIZE;
+            scale.y = Math.abs(scale.y) + Terrain.BLOCK_SIZE;
+            scale.z = Math.abs(scale.z) + Terrain.BLOCK_SIZE;
+            this.selectionBox.setSelection(midPoint, scale);
+        } else {
+            this.selectionBox.setSelection(curPosition, new THREE.Vector3(Terrain.BLOCK_SIZE, Terrain.BLOCK_SIZE, Terrain.BLOCK_SIZE));
         }
     }
 
@@ -136,7 +177,9 @@ class VoxelEditor extends GameObject {
                 this.planet.terrain.removeVoxel(start, end);
             }
         } else if (this.tool === EditorTools.paint) {
-            this.planet.terrain.paintVoxel(intersect.point, intersect.face!.normal, this.color);
+            const start = this.planet.terrain.pointToCoord(this.pressDownIntersect!.point, this.pressDownIntersect!.face!.normal, true);
+            const end = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal, true);
+            this.planet.terrain.paintVoxel(start, end, this.color);
         } else if (this.tool === EditorTools.items && this.model) {
             const locationId = this.planet.terrain.pointToLocationId(intersect.point, intersect.face!.normal);
             if (locationId > -1) {

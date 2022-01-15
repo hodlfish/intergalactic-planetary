@@ -17,14 +17,26 @@ const shader = {
         varying vec3 vertexColor;
         
         uniform vec3 ambientLight;
-        uniform vec3 colorPalette[6];
+        uniform vec3 colorPalette[15];
         
+        // This looks stupid af, but it is more performant on some devices.
         vec3 findColor(float value) {
-            int index = int(floor((value / 0.166) + 0.5));
-            for (int i=0; i<6; i++) {
-                if (i == index) return colorPalette[i];
-            }
-            return colorPalette[0];
+            int i = int(floor(value * 15.0 + 0.5));
+            if(i==0) return colorPalette[0];
+            else if(i==1) return colorPalette[1];
+            else if(i==2) return colorPalette[2];
+            else if(i==3) return colorPalette[3];
+            else if(i==4) return colorPalette[4];
+            else if(i==5) return colorPalette[5];
+            else if(i==6) return colorPalette[6];
+            else if(i==7) return colorPalette[7];
+            else if(i==8) return colorPalette[8];
+            else if(i==9) return colorPalette[9];
+            else if(i==10) return colorPalette[10];
+            else if(i==11) return colorPalette[11];
+            else if(i==12) return colorPalette[12];
+            else if(i==13) return colorPalette[13];
+            else return colorPalette[14];
         }
         
         void main() {

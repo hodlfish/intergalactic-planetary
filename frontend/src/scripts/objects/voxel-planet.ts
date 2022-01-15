@@ -1,7 +1,7 @@
 import GameObject from "scripts/engine/game-object";
-import * as THREE from 'three';
 import ColorPalette from "./color-palette";
 import Scenery from "./voxel-planet/scenery";
+import { COLOR_PALETTE_SIZE } from "./voxel-planet/settings";
 import Terrain from "./voxel-planet/terrain";
 
 class Planet extends GameObject {
@@ -11,7 +11,7 @@ class Planet extends GameObject {
 
     constructor() {
         super();
-        this.colorPalette = new ColorPalette(6);
+        this.colorPalette = new ColorPalette(COLOR_PALETTE_SIZE);
         this.terrain = new Terrain(this.colorPalette);
         this.scenery = new Scenery(this.terrain, this.colorPalette)
         this.scene.add(this.terrain.mesh);
