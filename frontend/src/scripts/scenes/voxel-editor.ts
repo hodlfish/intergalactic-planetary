@@ -9,6 +9,8 @@ import Terrain from 'scripts/objects/voxel-planet/terrain';
 import { Model } from 'scripts/model-loader';
 import { Intersection } from 'three';
 import SelectionBox from 'scripts/objects/voxel-planet/selection-box';
+import templates from 'scripts/objects/voxel-planet/templates';
+import { CallbackSet } from 'scripts/engine/helpers';
 
 export interface EditorTool {
     name: string,
@@ -33,6 +35,11 @@ export const EditorTools = {
         icon: 'tree',
         description: 'Add scenery'
     },
+    clear: {
+        name: 'Clear',
+        icon: 'trash',
+        description: 'Clear scenery'
+    },
     settings: {
         name: 'Settings',
         icon: 'gear'
@@ -40,6 +47,8 @@ export const EditorTools = {
 }
 
 class VoxelEditor extends GameObject {
+    static MAX_STATE_STACK = 50;
+
     isDrawing: boolean;
     grid: Grid;
     selectionBox: SelectionBox;
@@ -50,6 +59,11 @@ class VoxelEditor extends GameObject {
     cameraController: TargetCamera;
     model: Model | undefined;
     pressDownIntersect: Intersection | undefined;
+    onUpdateCallback: CallbackSet;
+    _undoStack: string[];
+    _redoStack: string[];
+    _preventChangeStack: boolean;
+    _saveStateTimeout: any;
 
     constructor() {
         super();
@@ -64,23 +78,87 @@ class VoxelEditor extends GameObject {
         this.engine.camera.lookAt(new THREE.Vector3(0, 0, 0));
         this.cameraController.transitionToTarget(new THREE.Vector3(), 1.0, 5.0);
         this.planet = new Planet();
+        this.planet.deserialize(templates.default);
         this.background = new Background(500, 20, 100);
         this.scene.add(this.background.mesh);
-        this.model = undefined;
+        this.onUpdateCallback = new CallbackSet();
+
+        // Undo and Redo
+        this.planet.terrain.onBeforeChange.addListener(this, () => {
+            this.setSaveStateTimeout();
+        });
+        this.planet.scenery.onBeforeChange.addListener(this, () => {
+            this.setSaveStateTimeout();
+        });
+        this.planet.colorPalette.onBeforeChange.addListener(this, () => {
+            this.setSaveStateTimeout();
+        });
+        this._undoStack = [];
+        this._redoStack = [];
+        this._preventChangeStack = false;
+        this._saveStateTimeout = undefined;
+    }
+
+    setSaveStateTimeout() {
+        if (this._preventChangeStack) {
+            return;
+        }
+        if (this._saveStateTimeout === undefined) {
+            this._undoStack.push(this.planet.serialize());
+            this._redoStack = [];
+            this._saveStateTimeout = setTimeout(() => {
+                this._saveStateTimeout = undefined;
+            }, 500);
+        } else {
+            clearTimeout(this._saveStateTimeout);
+            this._saveStateTimeout = setTimeout(() => {
+                this._saveStateTimeout = undefined;
+            }, 500);
+        }
+    }
+
+    undo() {
+        if (this._undoStack.length > 0) {
+            if (this._undoStack.length >= VoxelEditor.MAX_STATE_STACK) {
+                this._undoStack.shift();
+            }
+            this._preventChangeStack = true;
+            this._redoStack.push(this.planet.serialize());
+            this.planet.deserialize(this._undoStack.pop()!);
+            this.isDrawing = false;
+            this._preventChangeStack = false;
+        }
+    }
+
+    redo() {
+        if (this._redoStack.length > 0) {
+            this._preventChangeStack = true;
+            this._undoStack.push(this.planet.serialize())
+            this.planet.deserialize(this._redoStack.pop()!);
+            this.isDrawing = false;
+            this._preventChangeStack = false;
+        }
+    }
+
+    clearHistory() {
+        this._undoStack = [];
+        this._redoStack = [];
+        if (this._saveStateTimeout) {
+            clearTimeout(this._saveStateTimeout);
+            this._saveStateTimeout = undefined;
+        }
     }
 
     update(state: UpdateState) {
-        // if(state.keyboardMouse.inputStates.has('Control') && state.keyboardMouse.inputEvents.includes('z-down')) {
-        //     this.undo();
-        // } else if(state.keyboardMouse.inputStates.has('Control') && state.keyboardMouse.inputEvents.includes('y-down')) {
-        //     this.redo();
-        // } else {
-        //     this.handleKeyboardMouse(state);
-        //     this.handleTouch(state);
-        // }
+        if(state.keyboardMouse.inputStates.has('Control') && state.keyboardMouse.inputEvents.includes('z-down')) {
+            this.undo();
+        } else if(state.keyboardMouse.inputStates.has('Control') && state.keyboardMouse.inputEvents.includes('y-down')) {
+            this.redo();
+        } else {
+            this.handleKeyboardMouse(state);
+            this.handleTouch(state);
+        }
 
-        this.handleKeyboardMouse(state);
-        this.handleTouch(state);
         this.cameraController.setCursor(state);
     }
 
@@ -165,6 +243,7 @@ class VoxelEditor extends GameObject {
     }
 
     edit(intersect: THREE.Intersection) {
+        let updatePerformed = true;
         if (this.tool === EditorTools.add) {
             const start = this.planet.terrain.pointToCoord(this.pressDownIntersect!.point, this.pressDownIntersect!.face!.normal);
             const end = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal);
@@ -186,7 +265,17 @@ class VoxelEditor extends GameObject {
             if (locationId > -1) {
                 this.planet.scenery.addScenery(this.model.id, this.color, locationId);
             }
-        } 
+        } else if (this.tool === EditorTools.clear) {
+            const locationId = this.planet.terrain.pointToLocationId(intersect.point, intersect.face!.normal);
+            if (locationId > -1) {
+                this.planet.scenery.removeScenery(locationId);
+            }
+        } else {
+            updatePerformed = false;
+        }
+        if (updatePerformed) {
+            this.onUpdateCallback.call();
+        }
     }
 
     isUnsaved() {

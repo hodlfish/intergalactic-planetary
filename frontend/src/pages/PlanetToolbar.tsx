@@ -59,16 +59,16 @@ function Toolbar(props: ToolbarProps) {
     useEffect(() => {
         resetTools();
         editor.axes.visible = true;
-        editor.planet.colorPalette.onAfterChange.addListener('PLANET_EDITOR', (colors: THREE.Color[]) => {
+        editor.planet.colorPalette.onAfterChange.addListener('TOOLBAR', (colors: THREE.Color[]) => {
             setColorPalette(colors.map(c => `#${c.getHexString()}`));
         });
-        editor.onUpdateCallback.addListener('PLANET_EDITOR', () => {
+        editor.onUpdateCallback.addListener('TOOLBAR', () => {
             resetTools();
             setObjectCount(editor.planet.scenery.count);
         });
 
         return () => {
-            editor.onUpdateCallback.removeListener('PLANET_EDITOR');
+            editor.onUpdateCallback.removeListener('TOOLBAR');
         }
     }, [editor, resetTools])
 
@@ -189,8 +189,8 @@ function Toolbar(props: ToolbarProps) {
 
     const getToolName = () => {
         if (selectedTool) {
-            const max = objectCount >= Scenery.MAX_INSTANCES;
             if ([EditorTools.items, EditorTools.clear].includes(selectedTool)) {
+                const max = objectCount >= Scenery.MAX_INSTANCES;
                 return <>{selectedTool.name} <span className={ max ? 'error' : ''}>({objectCount} / {Scenery.MAX_INSTANCES})</span></>;
             }
             return selectedTool.name;

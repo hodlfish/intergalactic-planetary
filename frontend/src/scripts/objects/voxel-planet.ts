@@ -1,3 +1,4 @@
+import { verifyBase64 } from "scripts/base-64";
 import GameObject from "scripts/engine/game-object";
 import ColorPalette from "./color-palette";
 import Scenery from "./voxel-planet/scenery";
@@ -24,12 +25,39 @@ class Planet extends GameObject {
 
     serialize(): string {
         return 'VOX1=' + 
-            this.terrain.serialize();
+            this.terrain.serialize() + '=' +
+            this.scenery.serialize() + '=' +
+            this.colorPalette.serialize();
     }
 
     deserialize(vox1Data: string): boolean {
-        console.log(vox1Data)
-        return false;
+        try {
+            if (!verifyBase64(vox1Data)) {
+                throw Error(`Invalid base64 characters!`);
+            }
+            const [format, terrainData, sceneryData, colorData] = vox1Data.split('=');
+            if (format !== 'VOX1') {
+                throw Error(`Unexpected format ${format}!`);
+            }
+            if (!this.terrain.deserialize(terrainData)) throw new Error('Invalid terrain data!');
+            if (!this.scenery.deserialize(sceneryData)) throw new Error('Invalid scenery data!');
+            if (!this.colorPalette.deserialize(colorData)) throw new Error('Invalid color data!');
+            return true;
+        } catch(ex) {
+            console.log(ex);
+            return false;
+        }
+    }
+
+    export(name: string) {
+        const blob = new Blob([this.serialize()], { type: 'text/plain' });
+        const href = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = href;
+        link.download = `${name}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     dispose() {

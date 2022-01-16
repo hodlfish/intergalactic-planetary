@@ -1,3 +1,4 @@
+import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
 import { CallbackSet } from 'scripts/engine/helpers';
 import planetShader from 'scripts/shaders/voxel-planet/planet-shader';
 import * as THREE from 'three';
@@ -11,6 +12,8 @@ class Terrain {
     static EMPTY_ID = 15;
     static MIN_GRID = new THREE.Vector3(0, 0, 0);
     static MAX_GRID = new THREE.Vector3(Terrain.GRID_SIZE - 1, Terrain.GRID_SIZE - 1, Terrain.GRID_SIZE - 1);
+    static BLOCK_BIT_SIZE = 4;
+    static MAX_BITS = Terrain.GRID_SIZE * Terrain.GRID_SIZE * Terrain.GRID_SIZE * Terrain.BLOCK_BIT_SIZE + 2;
 
     colorPalette: ColorPalette;
     mesh: THREE.Mesh;
@@ -32,7 +35,6 @@ class Terrain {
 
         // Planet Mesh
         this.depthField = this._generateDepthField(Terrain.GRID_SIZE);
-        this.generateSphere();
         this.geometry = new THREE.BufferGeometry();
         this.material = new THREE.ShaderMaterial(
             {
@@ -62,18 +64,6 @@ class Terrain {
             }
         }
         return depthField;
-    }
-
-    generateSphere() {
-        const center = new THREE.Vector3(
-            Terrain.GRID_SIZE / 2.0,
-            Terrain.GRID_SIZE / 2.0,
-            Terrain.GRID_SIZE / 2.0
-        );
-        this._performBlockAction(Terrain.MIN_GRID, Terrain.MAX_GRID, (x,y,z) => {
-            const position = new THREE.Vector3(x + 0.5, y + 0.5, z + 0.5);
-            this.depthField[x][y][z] = position.distanceTo(center) < Math.round(Terrain.GRID_SIZE / 2) ? 0 : Terrain.EMPTY_ID;
-        })
     }
 
     onColorPaletteChange(colors: THREE.Color[]) {
@@ -150,6 +140,7 @@ class Terrain {
 
     attachVoxel(startCoord: THREE.Vector3, endCoord: THREE.Vector3, colorId: number) {
         if (startCoord && endCoord) {
+            this.emitBeforeUpdate();
             this._performBlockAction(startCoord, endCoord, (x, y, z) => {
                 this.depthField[x][y][z] = colorId;
             });
@@ -160,6 +151,7 @@ class Terrain {
 
     removeVoxel(startCoord: THREE.Vector3, endCoord: THREE.Vector3) {
         if (startCoord && endCoord) {
+            this.emitBeforeUpdate();
             this._performBlockAction(startCoord, endCoord, (x, y, z) => {
                 this.depthField[x][y][z] = Terrain.EMPTY_ID;
             });
@@ -170,6 +162,7 @@ class Terrain {
 
     paintVoxel(startCoord: THREE.Vector3, endCoord: THREE.Vector3, colorId: number) {
         if (startCoord && endCoord) {
+            this.emitBeforeUpdate();
             this._performBlockAction(startCoord, endCoord, (x, y, z) => {
                 if (this.depthField[x][y][z] !== Terrain.EMPTY_ID) {
                     this.depthField[x][y][z] = colorId;
@@ -255,12 +248,26 @@ class Terrain {
     }
 
     serialize() {
-        return false;
+        let binaryString = '';
+        this._performBlockAction(Terrain.MIN_GRID, Terrain.MAX_GRID, (x,y,z) => {
+            binaryString += this.depthField[x][y][z].toString(2).padStart(4, '0');
+        })
+        return binaryToBase64(binaryString);
     }
 
-    deserialize(data: string) {
-        console.log(data);
-        return false;
+    deserialize(base64Data: string) {
+        const binaryString = base64ToBinary(base64Data);
+        if (binaryString.length !== Terrain.MAX_BITS) {
+            return false;
+        }
+        let index = 0;
+        this._performBlockAction(Terrain.MIN_GRID, Terrain.MAX_GRID, (x,y,z) => {
+            const startIndex = index * 4;
+            this.depthField[x][y][z] = parseInt(binaryString.substring(startIndex, startIndex + 4), 2);
+            index++;
+        });
+        this.generate();
+        return true;
     }
 
     dispose() {

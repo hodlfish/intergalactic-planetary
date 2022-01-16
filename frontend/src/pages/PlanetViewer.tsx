@@ -135,7 +135,7 @@ function PlanetViewer() {
                 )
             } else {
                 return (
-                    <VoxelToolbar editor={scene as VoxelEditor}/>
+                    <VoxelToolbar editor={scene as VoxelEditor}  planetId={planetId!}/>
                 )
             }
         } else {

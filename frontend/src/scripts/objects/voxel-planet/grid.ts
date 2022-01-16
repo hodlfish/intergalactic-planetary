@@ -45,6 +45,7 @@ class Grid {
     }
 
     set visible(value: boolean) {
+        this.mesh.visible = value;
         this._visible = value;
     }
 

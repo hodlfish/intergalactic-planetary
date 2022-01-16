@@ -5,8 +5,9 @@ import Terrain from './terrain';
 import Engine, { LayerDefinitions } from 'scripts/engine/engine';
 import { getModel, ModelPacks } from 'scripts/model-loader';
 import GalacticSpec from 'scripts/galactic-spec';
-// import { CallbackSet } from 'scripts/engine/helpers';
 import { COLOR_PALETTE_SIZE } from './settings';
+import { CallbackSet } from 'scripts/engine/helpers';
+import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
 
 interface SceneryInstance {
     objectId: number;
@@ -15,8 +16,8 @@ interface SceneryInstance {
 }
 
 export class Scenery {
-    static SERIALIZED_INSTANCE_SIZE_BITS = 20;
-    static MAX_INSTANCES = 512;
+    static SERIALIZED_INSTANCE_SIZE_BITS = 25;
+    static MAX_INSTANCES = 12;
     static MAX_BITS = Scenery.MAX_INSTANCES * Scenery.SERIALIZED_INSTANCE_SIZE_BITS + 2; // +2 pads to the next base64 char.
 
     terrain: Terrain;
@@ -26,12 +27,11 @@ export class Scenery {
     locationSceneryMap = new Map<number, SceneryInstance>();
     sceneryMeshMap = new Map<number, THREE.InstancedMesh>();
     modelPack = ModelPacks[0];
-    // onBeforeChange: CallbackSet;
-    // onAfterChange: CallbackSet;
+    onBeforeChange: CallbackSet;
+    onAfterChange: CallbackSet;
 
     constructor(terrain: Terrain, colorPalette: ColorPalette) {
         this.terrain = terrain;
-        // TODO: When terrain is edited, validate scenery is still placeable.
         this.terrain.onAfterChange.addListener(this, () => {
             this.validateScenery();
         });
@@ -52,16 +52,16 @@ export class Scenery {
             vertexShader : sceneryShader.vertex,
             fragmentShader : sceneryShader.fragment
         });
-        // this.onBeforeChange = new CallbackSet();
-        // this.onAfterChange = new CallmbackSet();
+        this.onBeforeChange = new CallbackSet();
+        this.onAfterChange = new CallbackSet();
     }
 
     emitBeforeUpdate() {
-        // this.onBeforeChange.call();
+        this.onBeforeChange.call();
     }
 
     emitAfterUpdate() {
-        // this.onAfterChange.call();
+        this.onAfterChange.call();
     }
 
     validateScenery() {
@@ -114,19 +114,22 @@ export class Scenery {
     }
 
     _addScenery(objectId: number, colorId: number, locationId: number) {
-        let needsRefresh = false;
-        if (this.count < Scenery.MAX_INSTANCES || this.locationSceneryMap.has(locationId)) {
-            const current = this.locationSceneryMap.get(locationId);
-            if (!current || (current.objectId !== objectId || current.colorId !== colorId || current.locationId !== locationId)) {
-                needsRefresh = true;
+        if (this.terrain.isValidLocationId(locationId)) {
+            let needsRefresh = false;
+            if (this.count < Scenery.MAX_INSTANCES || this.locationSceneryMap.has(locationId)) {
+                const current = this.locationSceneryMap.get(locationId);
+                if (!current || (current.objectId !== objectId || current.colorId !== colorId || current.locationId !== locationId)) {
+                    needsRefresh = true;
+                }
+                this.locationSceneryMap.set(locationId, {
+                    objectId: objectId,
+                    colorId: colorId,
+                    locationId: locationId
+                });
             }
-            this.locationSceneryMap.set(locationId, {
-                objectId: objectId,
-                colorId: colorId,
-                locationId: locationId
-            });
+            return needsRefresh;
         }
-        return needsRefresh;
+        return false;
     }
 
     removeScenery(locationIds: number | number[]) {
@@ -201,43 +204,43 @@ export class Scenery {
     }
 
     serialize() {
-        // let binary = Array.from(this.locationSceneryMap.values()).map(scenery => {
-        //     return scenery.objectId.toString(2).padStart(6, '0') +
-        //         scenery.locationId.toString(2).padStart(11, '0') +
-        //         scenery.colorId.toString(2).padStart(3, '0');
-        // }).join('');
-        // binary = (0).toString(2).padStart(6, '0') + binary; // Add model pack id
-        // return binaryToBase64(binary);
+        let binary = Array.from(this.locationSceneryMap.values()).map(scenery => {
+            return scenery.objectId.toString(2).padStart(6, '0') +
+                scenery.locationId.toString(2).padStart(15, '0') +
+                scenery.colorId.toString(2).padStart(4, '0');
+        }).join('');
+        binary = (0).toString(2).padStart(6, '0') + binary; // Add model pack id
+        return binaryToBase64(binary);
     }
 
     deserialize(base64: string) {
-        console.log(base64);
-        // const binary = base64ToBinary(base64);
-        // if (binary.length < 6) {
-        //     return false;
-        // }
-        // // Model Pack ID not used yet.
-        // // const modelPackBinary = binary.substring(0, 6);
-        // const sceneryBinary = binary.substring(6, binary.length);
-        // this.locationSceneryMap.clear();
-        // if(sceneryBinary.length > Scenery.MAX_BITS) {
-        //     return false;
-        // }
-        // const itemCount = Math.floor(sceneryBinary.length / Scenery.SERIALIZED_INSTANCE_SIZE_BITS);
-        // for(let i = 0; i < itemCount; i++) {
-        //     const startIndex = i * Scenery.SERIALIZED_INSTANCE_SIZE_BITS;
-        //     const endIndex = startIndex + Scenery.SERIALIZED_INSTANCE_SIZE_BITS;
-        //     const itemBinary = sceneryBinary.substring(startIndex, endIndex);
-        //     const item = {
-        //         objectId: parseInt(itemBinary.substring(0, 6), 2),
-        //         locationId: parseInt(itemBinary.substring(6, 17), 2),
-        //         colorId: parseInt(itemBinary.substring(17, 20), 2)
-        //     }
-        //     this.locationSceneryMap.set(item.locationId, item);
-        // }
-        // this.refresh();
-        // return true;
+        const binary = base64ToBinary(base64);
+        if (binary.length < 6) {
+            return false;
+        }
+        // Model Pack ID not used yet.
+        // const modelPackBinary = binary.substring(0, 6);
+        const sceneryBinary = binary.substring(6, binary.length);
+        this.locationSceneryMap.clear();
+        if(sceneryBinary.length > Scenery.MAX_BITS) {
+            return false;
+        }
+        const itemCount = Math.floor(sceneryBinary.length / Scenery.SERIALIZED_INSTANCE_SIZE_BITS);
+        for(let i = 0; i < itemCount; i++) {
+            const startIndex = i * Scenery.SERIALIZED_INSTANCE_SIZE_BITS;
+            const endIndex = startIndex + Scenery.SERIALIZED_INSTANCE_SIZE_BITS;
+            const itemBinary = sceneryBinary.substring(startIndex, endIndex);
+            const item = {
+                objectId: parseInt(itemBinary.substring(0, 6), 2),
+                locationId: parseInt(itemBinary.substring(6, 21), 2),
+                colorId: parseInt(itemBinary.substring(21, 25), 2)
+            }
+            this.locationSceneryMap.set(item.locationId, item);
+        }
         this.validateScenery();
+        this.refresh();
+        return true;
+        
     }
 
     dispose() {
