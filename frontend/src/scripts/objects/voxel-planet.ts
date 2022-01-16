@@ -28,7 +28,7 @@ class Planet extends GameObject {
     }
 
     deserialize(vox1Data: string): boolean {
-        // console.log(vox1Data)
+        console.log(vox1Data)
         return false;
     }
 

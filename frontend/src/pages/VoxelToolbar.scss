@@ -6,11 +6,12 @@
         position: relative;
         pointer-events: all;
         display: grid;
-        grid-template-columns: 1fr max-content;
-        grid-template-rows: min-content min-content;
+        grid-template-columns: 1fr;
+        grid-template-rows: min-content min-content min-content;
         grid-template-areas:
-            "settings colors"
-            "tools tools";
+            "settings"
+            "colors"
+            "tools";
         border-radius: 10px;
         margin: auto;
         background-color: $bg-1;
@@ -110,11 +111,10 @@
             flex-direction: row;
             flex-wrap: wrap;
             align-items: center;
-            min-height: 60px;
-            max-width: 160px;
-            border-width: 0px 0px 1px 1px;
+            border-width: 0px 0px 1px 0px;
             border-style: solid;
             border-color: $bg1-shadow;
+            justify-content: center;
         
             .color-item {
                 margin: 10px;
@@ -127,6 +127,39 @@
             .color-item.selected {
                 box-sizing: border-box;
                 border: solid 2px white;
+            }
+
+            .color-picker {
+                display: grid;
+                width: 50px;
+                height: 50px;
+                position: relative;
+    
+                svg {
+                    width: 24px;
+                    height: 24px;
+                    left: 0px;
+                    right: 0px;
+                    top: 0px;
+                    bottom: 0px;
+                    position: absolute;
+                    margin: auto;
+                    stroke: white;
+                    pointer-events: none;
+                }
+    
+                input[type=color] {
+                    width: 30px;
+                    height: 30px;
+                    margin: 10px;
+                    margin: auto;
+                }
+                input[type=color]::-webkit-color-swatch-wrapper {
+                    padding: 0;
+                }
+                input[type=color]::-webkit-color-swatch {
+                    border: none;
+                }
             }
         }
 
@@ -158,10 +191,14 @@
         }
 
         #scenery-items {
+            grid-area: settings;
             max-height: 190px;
             overflow: auto;
             display: flex;
             flex-wrap: wrap;
+            border-width: 0px 0px 1px 0px;
+            border-style: solid;
+            border-color: $bg1-shadow;
             justify-content: center;
 
             .scenery-item {
@@ -206,39 +243,6 @@
             border-width: 0px 0px 1px 0px;
             border-style: solid;
             border-color: $bg1-shadow;
-        }
-
-        .color-picker {
-            display: grid;
-            width: 50px;
-            height: 50px;
-            position: relative;
-
-            svg {
-                width: 24px;
-                height: 24px;
-                left: 0px;
-                right: 0px;
-                top: 0px;
-                bottom: 0px;
-                position: absolute;
-                margin: auto;
-                stroke: white;
-                pointer-events: none;
-            }
-
-            input[type=color] {
-                width: 30px;
-                height: 30px;
-                margin: 10px;
-                margin: auto;
-            }
-            input[type=color]::-webkit-color-swatch-wrapper {
-                padding: 0;
-            }
-            input[type=color]::-webkit-color-swatch {
-                border: none;
-            }
         }
     }
 }

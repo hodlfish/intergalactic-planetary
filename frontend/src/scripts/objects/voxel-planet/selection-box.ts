@@ -42,6 +42,10 @@ class SelectionBox extends GameObject {
         this.mesh.scale.set(...scale.toArray());
     }
 
+    setColor(color: THREE.Color) {
+        (this.mesh.material as any).uniforms.gridColor.value = color;
+    }
+
     get visible() {
         return this._visible;
     }

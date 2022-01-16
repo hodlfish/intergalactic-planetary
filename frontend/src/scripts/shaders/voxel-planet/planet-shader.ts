@@ -38,11 +38,25 @@ const shader = {
             else if(i==13) return colorPalette[13];
             else return colorPalette[14];
         }
+
+        float getLightStrength(vec3 normal) {
+            if (normal.x > 0.1) {
+                return 1.0;
+            } else if (normal.x < -0.1) {
+                return 1.0;
+            } else if (normal.y > 0.1) {
+                return 0.8;
+            } else if (normal.y < -0.1) {
+                return 0.8;
+            } else if (normal.z > 0.1) {
+                return 0.9;
+            } else {
+                return 0.9;
+            }
+        }
         
         void main() {
-            vec3 toCamera = normalize(cameraPosition - vertexPositionW);
-            float lightStrength = pow(dot(toCamera, vertexNormalW), 1.0) * 0.5 + 0.5;
-            vec3 lightingRamp = mix(ambientLight, findColor(vertexColor.r), lightStrength);
+            vec3 lightingRamp = mix(ambientLight, findColor(vertexColor.r), getLightStrength(vertexNormalW));
             gl_FragColor = vec4(lightingRamp, 1.0);
         }
     `

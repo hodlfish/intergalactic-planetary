@@ -6,8 +6,7 @@ import { UpdateState } from 'scripts/engine/engine';
 import TargetCamera from 'scripts/cameras/target-camera';
 import Grid from 'scripts/objects/voxel-planet/grid';
 import Terrain from 'scripts/objects/voxel-planet/terrain';
-import { Model, getModel, ModelPacks } from 'scripts/model-loader';
-import Scenery from 'scripts/objects/voxel-planet/scenery';
+import { Model } from 'scripts/model-loader';
 import { Intersection } from 'three';
 import SelectionBox from 'scripts/objects/voxel-planet/selection-box';
 
@@ -19,11 +18,11 @@ export interface EditorTool {
 export const EditorTools = {
     add: {
         name: 'Add',
-        icon: 'raise'
+        icon: 'add-voxel'
     },
     remove: {
         name: 'Remove',
-        icon: 'lower'
+        icon: 'remove-voxel'
     },
     paint: {
         name: 'Paint',
@@ -139,6 +138,7 @@ class VoxelEditor extends GameObject {
         if (this.tool === EditorTools.add) {
             const curCoord = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal);
             curPosition = this.planet.terrain.coordinateToPosition(...curCoord.toArray());
+            this.selectionBox.setColor(new THREE.Color(0, 1, 0));
             if (this.pressDownIntersect) {
                 const startCoord = this.planet.terrain.pointToCoord(this.pressDownIntersect.point, this.pressDownIntersect.face!.normal);
                 startPosition = this.planet.terrain.coordinateToPosition(...startCoord.toArray());
@@ -146,6 +146,7 @@ class VoxelEditor extends GameObject {
         } else {
             const end = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal, true);
             curPosition = this.planet.terrain.coordinateToPosition(end.x, end.y, end.z);
+            this.selectionBox.setColor(new THREE.Color(1, 0, 0));
             if (this.pressDownIntersect) {
                 const startCoord = this.planet.terrain.pointToCoord(this.pressDownIntersect.point, this.pressDownIntersect.face!.normal, true);
                 startPosition = this.planet.terrain.coordinateToPosition(...startCoord.toArray());

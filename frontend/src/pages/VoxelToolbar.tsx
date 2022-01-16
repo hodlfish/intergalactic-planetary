@@ -23,7 +23,6 @@ function VoxelToolbar(props: ToolbarProps) {
 
     useEffect(() => {
         setColorPalette(editor.planet.colorPalette.colors.map(c => `#${c.getHexString()}`));
-        console.log(editor.planet.colorPalette.colors)
         editor.planet.colorPalette.onAfterChange.addListener('TOOLBAR', (colors: any[]) => setColorPalette(colors.map(c => `#${c.getHexString()}`)));
     }, [editor])
 
@@ -110,7 +109,7 @@ function VoxelToolbar(props: ToolbarProps) {
     }
 
     const renderColors = () => {
-        if (!selectedTool || hideToolSettings || ![EditorTools.paint, EditorTools.add, EditorTools.remove].includes(selectedTool)) {
+        if (!selectedTool || hideToolSettings || ![EditorTools.paint, EditorTools.add, EditorTools.items].includes(selectedTool)) {
             return '';
         }
         return (
@@ -121,7 +120,7 @@ function VoxelToolbar(props: ToolbarProps) {
                             style={{ backgroundColor: c }} onClick={() => onSetSelectedColor(index)} />
                     </div>
                 )}
-                <div className="color-picker">x
+                <div className="color-picker">
                     <svg>
                         <use href="#pencil" />
                     </svg>

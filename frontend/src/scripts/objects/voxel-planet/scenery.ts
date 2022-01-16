@@ -5,7 +5,7 @@ import Terrain from './terrain';
 import Engine, { LayerDefinitions } from 'scripts/engine/engine';
 import { getModel, ModelPacks } from 'scripts/model-loader';
 import GalacticSpec from 'scripts/galactic-spec';
-import { CallbackSet } from 'scripts/engine/helpers';
+// import { CallbackSet } from 'scripts/engine/helpers';
 import { COLOR_PALETTE_SIZE } from './settings';
 
 interface SceneryInstance {
@@ -38,8 +38,7 @@ export class Scenery {
         this.colorPalette = colorPalette;
         this.colorPalette.onAfterChange.addListener(this, (colors: THREE.Color[]) => {
             this.onColorPaletteChange(colors);
-        })
-        console.log(this.colorPalette.colors)
+        });
         this.scene = new THREE.Scene();
         this.locationSceneryMap = new Map<number, SceneryInstance>();
         this.sceneryMeshMap = new Map<number, THREE.InstancedMesh>();
@@ -212,6 +211,7 @@ export class Scenery {
     }
 
     deserialize(base64: string) {
+        console.log(base64);
         // const binary = base64ToBinary(base64);
         // if (binary.length < 6) {
         //     return false;
