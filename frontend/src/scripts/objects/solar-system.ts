@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import GameObject from 'scripts/engine/game-object';
-import Planet from 'scripts/objects/geo-planet';
+import GeoPlanet from 'scripts/objects/geo-planet';
+import VoxelPlanet from './voxel-planet';
 import Templates from 'scripts/objects/geo-planet/templates';
 import GalacticSpec from 'scripts/galactic-spec';
 import { PlanetInfo } from 'scripts/api';
@@ -8,7 +9,7 @@ import OrbitPath from './orbit-path';
 import Star from './star';
 
 interface PlanetData {
-    planet: Planet,
+    planet: GeoPlanet | VoxelPlanet,
     info: PlanetInfo | undefined
 }
 
@@ -34,7 +35,9 @@ class SolarSystem extends GameObject {
         for(let i = 0; i < planetIds.length; i++) {
             const planetId = planetIds[i];
             const planetInfo = planetInfos.find(info => info.token_id === planetId);
-            const planet = new Planet(Math.random() * 0.25);
+            const voxPlanet = planetInfo && planetInfo.data && planetInfo.data.startsWith('VOX1');
+            const rotationSpeed = Math.random() * 0.25;
+            const planet = (voxPlanet) ? new VoxelPlanet(rotationSpeed) : new GeoPlanet(rotationSpeed);
             this.collisionMeshes.push(planet.terrain.mesh);
             if (!planetInfo || !planetInfo.data || !planet.deserialize(planetInfo.data)) {
                 planet.deserialize(Templates.unminted);

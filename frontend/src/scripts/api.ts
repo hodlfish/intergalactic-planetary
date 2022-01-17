@@ -1,7 +1,9 @@
 import { LCDClient, MsgExecuteContract, SimplePublicKey, TxInfo } from '@terra-money/terra.js';
 import { Fee } from '@terra-money/terra.js/dist/core/Fee';
-import Settings from './settings';
+import { Testnet as Network } from './settings';
 import { sleep } from './utility';
+
+export const Settings = Network
 
 const terra = new LCDClient({
     URL: Settings.LCD_URL,

@@ -17,7 +17,7 @@ interface SceneryInstance {
 
 export class Scenery {
     static SERIALIZED_INSTANCE_SIZE_BITS = 25;
-    static MAX_INSTANCES = 12;
+    static MAX_INSTANCES = 256;
     static MAX_BITS = Scenery.MAX_INSTANCES * Scenery.SERIALIZED_INSTANCE_SIZE_BITS + 2; // +2 pads to the next base64 char.
 
     terrain: Terrain;

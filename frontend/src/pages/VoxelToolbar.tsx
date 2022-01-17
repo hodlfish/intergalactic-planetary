@@ -1,5 +1,8 @@
+import { useConnectedWallet } from '@terra-money/wallet-provider';
 import ConfirmationModal from 'components/modals/ConfirmationModal';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import SaveModal from 'components/modals/SaveModal';
+import { pushNotification } from 'hooks/useGlobalState';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Model, ModelPacks } from 'scripts/model-loader';
 import Scenery from 'scripts/objects/voxel-planet/scenery';
 import templates from 'scripts/objects/voxel-planet/templates';
@@ -19,6 +22,8 @@ const defaults = {
 
 function VoxelToolbar(props: ToolbarProps) {
     const { editor, planetId } = props;
+    const wallet = useConnectedWallet();
+    const [saveModal, setSaveModal] = useState<boolean>(false);
     const [hideToolSettings, setHideToolSettings] = useState<boolean>(false);
     const [selectedTool, setSelectedTool] = useState<EditorTool | undefined>(defaults.tool);
     const [selectedColor, setSelectedColor] = useState<number>(0);
@@ -96,6 +101,13 @@ function VoxelToolbar(props: ToolbarProps) {
                         </svg>
                     </div>
                 )}
+                {(planetId !== 'sandbox') &&
+                    <div className="tool-item" onClick={() => setSaveModal(true)}>
+                        <svg width="24" height="24">
+                            <use href={`#save`} />
+                        </svg>
+                    </div>
+                }
             </div>
         )
     }
@@ -221,7 +233,9 @@ function VoxelToolbar(props: ToolbarProps) {
             const reader = new FileReader();
             reader.onload = (data => {
                 try {
-                    editor.planet.deserialize(data.target?.result as string);
+                    if (!editor.planet.deserialize(data.target?.result as string)) {
+                        pushNotification(`Invalid VOX1 format!`);
+                    }
                     editor.clearHistory();
                     resetTools();
                 } catch (error) {
@@ -243,6 +257,9 @@ function VoxelToolbar(props: ToolbarProps) {
 
     return (
         <div id="vox-toolbar-component">
+            {(saveModal && wallet) && 
+                <SaveModal editor={editor} planetId={planetId} onClose={() => setSaveModal(false)} onSave={() => editor.markSaved()}/>
+            }
             <div id="toolbar">
                 {renderToolTitle()}
                 {renderColors()}

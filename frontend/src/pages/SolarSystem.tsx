@@ -5,8 +5,8 @@ import GalacticSpec from "scripts/galactic-spec";
 import { pushNotification, useGlobalState, getGlobalState } from "hooks/useGlobalState";
 import Engine from "scripts/engine/engine";
 import { copyToClipboard } from "scripts/utility";
-import Settings from "scripts/settings";
 import { isBrowser } from 'react-device-detect';
+import { Settings } from "scripts/api";
 
 function SolarSystemViewer() {
     const navigate = useNavigate();

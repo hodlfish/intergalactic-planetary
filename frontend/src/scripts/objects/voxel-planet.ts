@@ -1,17 +1,20 @@
 import { verifyBase64 } from "scripts/base-64";
+import { UpdateState } from "scripts/engine/engine";
 import GameObject from "scripts/engine/game-object";
 import ColorPalette from "./color-palette";
 import Scenery from "./voxel-planet/scenery";
 import { COLOR_PALETTE_SIZE } from "./voxel-planet/settings";
 import Terrain from "./voxel-planet/terrain";
 
-class Planet extends GameObject {
+class VoxelPlanet extends GameObject {
     scenery: Scenery;
     colorPalette: ColorPalette;
     terrain: Terrain;
+    rotationSpeed: number;
 
-    constructor() {
+    constructor(rotationSpeed = 0.0) {
         super();
+        this.rotationSpeed = rotationSpeed;
         this.colorPalette = new ColorPalette(COLOR_PALETTE_SIZE);
         this.terrain = new Terrain(this.colorPalette);
         this.scenery = new Scenery(this.terrain, this.colorPalette)
@@ -19,8 +22,11 @@ class Planet extends GameObject {
         this.scene.add(this.scenery.scene);
     }
 
-    update() {
+    update(state: UpdateState) {
         this.scenery.animate();
+        if (this.rotationSpeed > 0.0) {
+            this.scene.rotateY(state.deltaTime * this.rotationSpeed);
+        }
     }
 
     serialize(): string {
@@ -67,4 +73,4 @@ class Planet extends GameObject {
     }
 }
 
-export default Planet;
+export default VoxelPlanet;

@@ -8,6 +8,7 @@ import ConfirmationModal from 'components/modals/ConfirmationModal';
 import Templates from 'scripts/objects/geo-planet/templates';
 import { naturalSort } from 'scripts/utility';
 import { useCallback } from 'react';
+import { pushNotification } from 'hooks/useGlobalState';
 
 interface ToolbarProps {
     editor: PlanetEditor,
@@ -25,8 +26,8 @@ const defaults = {
 }
 
 function Toolbar(props: ToolbarProps) {
-    const wallet = useConnectedWallet();
     const { editor, planetId } = props;
+    const wallet = useConnectedWallet();
     const [hideToolSettings, setHideToolSettings] = useState<boolean>(false);
     const [saveModal, setSaveModal] = useState<boolean>(false);
     const [selectedTool, setSelectedTool] = useState<EditorTool | undefined>(defaults.tool);
@@ -156,7 +157,9 @@ function Toolbar(props: ToolbarProps) {
             const reader = new FileReader();
             reader.onload = (data => {
                 try {
-                    editor.planet.deserialize(data.target?.result as string);
+                    if (!editor.planet.deserialize(data.target?.result as string)) {
+                        pushNotification(`Invalid GEO1 format!`);
+                    }
                     editor.clearHistory();
                     resetTools();
                 } catch (error) {

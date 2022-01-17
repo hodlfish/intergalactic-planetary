@@ -60,6 +60,7 @@ class VoxelEditor extends GameObject {
     model: Model | undefined;
     pressDownIntersect: Intersection | undefined;
     onUpdateCallback: CallbackSet;
+    lastSaveState: string;
     _undoStack: string[];
     _redoStack: string[];
     _preventChangeStack: boolean;
@@ -82,6 +83,7 @@ class VoxelEditor extends GameObject {
         this.background = new Background(500, 20, 100);
         this.scene.add(this.background.mesh);
         this.onUpdateCallback = new CallbackSet();
+        this.lastSaveState = '';
 
         // Undo and Redo
         this.planet.terrain.onBeforeChange.addListener(this, () => {
@@ -279,7 +281,11 @@ class VoxelEditor extends GameObject {
     }
 
     isUnsaved() {
-        return false;
+        return this.planet.serialize() !== this.lastSaveState;
+    }
+
+    markSaved() {
+        this.lastSaveState = this.planet.serialize();
     }
 
     dispose() {

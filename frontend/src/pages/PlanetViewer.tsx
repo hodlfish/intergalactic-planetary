@@ -9,10 +9,9 @@ import { useNavigate, useLocation, useParams } from 'react-router';
 import ConfirmationModal from 'components/modals/ConfirmationModal';
 import Engine from 'scripts/engine/engine';
 import { copyToClipboard } from 'scripts/utility';
-import Settings from 'scripts/settings';
 import VoxelEditor from 'scripts/scenes/voxel-editor';
 import templates from 'scripts/objects/geo-planet/templates';
-import { getPlanets } from 'scripts/api';
+import { getPlanets, Settings } from 'scripts/api';
 
 enum PlanetType {
     Geo, Voxel
