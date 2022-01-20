@@ -35,7 +35,7 @@ class SolarSystem extends GameObject {
         for(let i = 0; i < planetIds.length; i++) {
             const planetId = planetIds[i];
             const planetInfo = planetInfos.find(info => info.token_id === planetId);
-            const voxPlanet = planetInfo && planetInfo.data && planetInfo.data.startsWith('VOX1');
+            const voxPlanet = planetInfo && planetInfo.data && VoxelPlanet.isFormat(planetInfo.data);
             const rotationSpeed = Math.random() * 0.25;
             const planet = (voxPlanet) ? new VoxelPlanet(rotationSpeed) : new GeoPlanet(rotationSpeed);
             this.collisionMeshes.push(planet.terrain.mesh);

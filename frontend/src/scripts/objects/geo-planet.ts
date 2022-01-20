@@ -10,6 +10,8 @@ import { verifyBase64 } from 'scripts/base-64';
 import { COLOR_PALETTE_SIZE } from './geo-planet/settings';
 
 class GeoPlanet extends GameObject {
+    static FORMAT = 'GEO1';
+
     scenery: Scenery;
     atmosphere: Atmosphere;
     water: Water;
@@ -52,8 +54,12 @@ class GeoPlanet extends GameObject {
         super.dispose();
     }
 
+    static isFormat(data: string): boolean {
+        return data.startsWith(GeoPlanet.FORMAT);
+    }
+
     serialize(): string {
-        return 'GEO1=' + 
+        return `${GeoPlanet.FORMAT}=` + 
             this.terrain.serialize() + '=' +
             this.scenery.serialize() + '=' +
             this.colorPalette.serialize() + '=' +
@@ -61,13 +67,13 @@ class GeoPlanet extends GameObject {
             this.water.serialize();
     }
 
-    deserialize(ico1Data: string): boolean {
+    deserialize(geoData: string): boolean {
         try {
-            if (!verifyBase64(ico1Data)) {
+            if (!verifyBase64(geoData)) {
                 throw Error(`Invalid base64 characters!`);
             }
-            const [format, terrainData, sceneryData, colorData, skyData, waterData] = ico1Data.split('=');
-            if (format !== 'GEO1') {
+            const [format, terrainData, sceneryData, colorData, skyData, waterData] = geoData.split('=');
+            if (format !== GeoPlanet.FORMAT) {
                 throw Error(`Unexpected format ${format}!`);
             }
             if (!this.terrain.deserialize(terrainData)) throw new Error('Invalid terrain data!');

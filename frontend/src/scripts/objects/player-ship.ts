@@ -3,7 +3,8 @@ import * as THREE from 'three';
 import spaceAssetShader from 'scripts/shaders/space-asset-shader';
 import GameObject from 'scripts/engine/game-object';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader';
-import IcoPlanet from './geo-planet';
+import GeoPlanet from './geo-planet';
+import VoxelPlanet from './voxel-planet';
 import Projectile from './projectile';
 import ExplosionEffect from './explosion-effect';
 import Crosshair from './crosshair';
@@ -146,9 +147,7 @@ export class PlayerShip extends GameObject {
         const shipCollision = this._checkShipCollision(dPos);
         if (shipCollision) {
             const collisionObject = this.engine.getCollisionObject(shipCollision.object as THREE.Mesh);
-            if (collisionObject instanceof IcoPlanet) {
-                this.onHitPlanet(collisionObject as IcoPlanet, shipCollision);
-            }
+            this.onProjectileHit(collisionObject, shipCollision);
             this.death();
             this.engine.curtain.fadeOut(1.0, () => {
                 this.respawn();
@@ -180,17 +179,28 @@ export class PlayerShip extends GameObject {
     }
 
     onProjectileHit(object: any, intersection: THREE.Intersection) {
-        if (object instanceof IcoPlanet) {
-            this.onHitPlanet(object as IcoPlanet, intersection)
+        if (object instanceof GeoPlanet) {
+            this.onHitGeoPlanet(object as GeoPlanet, intersection)
+        }
+        if (object instanceof VoxelPlanet) {
+            this.onHitVoxelPlanet(object as VoxelPlanet, intersection)
         }
         new ExplosionEffect(intersection.point, 0.33, 10, 0.25);
     }
 
-    onHitPlanet(planet: IcoPlanet, intersection: THREE.Intersection) {
+    onHitGeoPlanet(planet: GeoPlanet, intersection: THREE.Intersection) {
         const localPosition = planet.scene.worldToLocal(intersection.point.clone());
         planet.terrain.raiseTerrain(localPosition, intersection.faceIndex!, false, .97, 1.0);
         const locationIds = planet.terrain.getLocationsInNormalizedRadius(localPosition, intersection.faceIndex!, .90);
         planet.scenery.removeScenery(locationIds);
+    }
+
+    onHitVoxelPlanet(planet: VoxelPlanet, intersection: THREE.Intersection) {
+        const localPosition = planet.scene.worldToLocal(intersection.point.clone());
+        const coord = planet.terrain.pointToCoord(localPosition, intersection.face!.normal, true);
+        const startCoord = coord.clone().sub(new THREE.Vector3(1, 1, 1));
+        const endCoord = coord.clone().add(new THREE.Vector3(1, 1, 1));
+        planet.terrain.removeVoxel(startCoord, endCoord);
     }
 
     _checkShipCollision(dPosition: THREE.Vector3): THREE.Intersection | undefined {

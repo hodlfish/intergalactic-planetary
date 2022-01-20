@@ -37,6 +37,11 @@ class SelectionBox extends GameObject {
         this.scene.add(this.mesh);
     }
 
+    setEmpty() {
+        this.mesh.position.set(0, 0, 0);
+        this.mesh.scale.set(0, 0, 0);
+    }
+
     setSelection(position: THREE.Vector3, scale: THREE.Vector3) {
         this.mesh.position.set(...position.toArray());
         this.mesh.scale.set(...scale.toArray());

@@ -4,6 +4,7 @@ import SaveModal from 'components/modals/SaveModal';
 import { pushNotification } from 'hooks/useGlobalState';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Model, ModelPacks } from 'scripts/model-loader';
+import VoxelPlanet from 'scripts/objects/voxel-planet';
 import Scenery from 'scripts/objects/voxel-planet/scenery';
 import templates from 'scripts/objects/voxel-planet/templates';
 import VoxelEditor, { EditorTool, EditorTools } from 'scripts/scenes/voxel-editor';
@@ -11,7 +12,8 @@ import { naturalSort } from 'scripts/utility';
 
 interface ToolbarProps {
     editor: VoxelEditor,
-    planetId: string
+    planetId: string,
+    onFormatChange: any
 } 
 
 const defaults = {
@@ -21,7 +23,7 @@ const defaults = {
 }
 
 function VoxelToolbar(props: ToolbarProps) {
-    const { editor, planetId } = props;
+    const { editor, planetId, onFormatChange } = props;
     const wallet = useConnectedWallet();
     const [saveModal, setSaveModal] = useState<boolean>(false);
     const [hideToolSettings, setHideToolSettings] = useState<boolean>(false);
@@ -40,6 +42,8 @@ function VoxelToolbar(props: ToolbarProps) {
 
     useEffect(() => {
         resetTools();
+        editor.grid.visible = true;
+        editor.selectionBox.visible = true;
         editor.planet.colorPalette.onAfterChange.addListener('TOOLBAR', (colors: any[]) => {
             setColorPalette(colors.map(c => `#${c.getHexString()}`));
         });
@@ -99,6 +103,7 @@ function VoxelToolbar(props: ToolbarProps) {
                         <svg>
                             <use href={`#${tool.icon}`} />
                         </svg>
+                        <span className="tooltip">{tool.description}</span>
                     </div>
                 )}
                 {(planetId !== 'sandbox') &&
@@ -106,6 +111,7 @@ function VoxelToolbar(props: ToolbarProps) {
                         <svg width="24" height="24">
                             <use href={`#save`} />
                         </svg>
+                        <span className="tooltip">Save</span>
                     </div>
                 }
             </div>
@@ -174,6 +180,12 @@ function VoxelToolbar(props: ToolbarProps) {
                         onChange={onUploadFile}
                     />
                 </div>
+                <div className="tool-item" onClick={() => onFormatChange()}>
+                    <svg width="24" height="24">
+                        <use href={`#ico`} />
+                    </svg>
+                    <span className="tooltip">Change format</span>
+                </div>
                 {confirmReset &&
                     <ConfirmationModal 
                         title="Reset Planet" 
@@ -234,7 +246,7 @@ function VoxelToolbar(props: ToolbarProps) {
             reader.onload = (data => {
                 try {
                     if (!editor.planet.deserialize(data.target?.result as string)) {
-                        pushNotification(`Invalid VOX1 format!`);
+                        pushNotification(`Invalid ${VoxelPlanet.FORMAT} format!`);
                     }
                     editor.clearHistory();
                     resetTools();

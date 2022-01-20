@@ -1,10 +1,12 @@
 const shader = {
     vertex: `
+        varying vec3 vertexNormal;
         varying vec3 vertexNormalW;
         varying vec3 vertexPositionW;
         varying vec3 vertexColor;
         
         void main() {
+            vertexNormal = normal;
             vertexNormalW = vec3(modelMatrix * vec4(normal, 0.0));
             vertexPositionW = vec3(modelMatrix * vec4(position, 1.0));
             vertexColor = color;
@@ -12,6 +14,7 @@ const shader = {
         }
     `,
     fragment: `
+        varying vec3 vertexNormal;
         varying vec3 vertexNormalW;
         varying vec3 vertexPositionW;
         varying vec3 vertexColor;
@@ -56,7 +59,7 @@ const shader = {
         }
         
         void main() {
-            vec3 lightingRamp = mix(ambientLight, findColor(vertexColor.r), getLightStrength(vertexNormalW));
+            vec3 lightingRamp = mix(ambientLight, findColor(vertexColor.r), getLightStrength(vertexNormal));
             gl_FragColor = vec4(lightingRamp, 1.0);
         }
     `

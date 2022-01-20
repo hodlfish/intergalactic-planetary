@@ -6,7 +6,7 @@ import { pushNotification, useGlobalState, getGlobalState } from "hooks/useGloba
 import Engine from "scripts/engine/engine";
 import { copyToClipboard } from "scripts/utility";
 import { isBrowser } from 'react-device-detect';
-import { Settings } from "scripts/api";
+import Settings from 'scripts/settings';
 
 function SolarSystemViewer() {
     const navigate = useNavigate();

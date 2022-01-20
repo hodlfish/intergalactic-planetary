@@ -9,10 +9,12 @@ import Templates from 'scripts/objects/geo-planet/templates';
 import { naturalSort } from 'scripts/utility';
 import { useCallback } from 'react';
 import { pushNotification } from 'hooks/useGlobalState';
+import GeoPlanet from 'scripts/objects/geo-planet';
 
 interface ToolbarProps {
     editor: PlanetEditor,
-    planetId: string
+    planetId: string,
+    onFormatChange: any
 } 
 
 const defaults = {
@@ -26,7 +28,7 @@ const defaults = {
 }
 
 function Toolbar(props: ToolbarProps) {
-    const { editor, planetId } = props;
+    const { editor, planetId, onFormatChange } = props;
     const wallet = useConnectedWallet();
     const [hideToolSettings, setHideToolSettings] = useState<boolean>(false);
     const [saveModal, setSaveModal] = useState<boolean>(false);
@@ -158,7 +160,7 @@ function Toolbar(props: ToolbarProps) {
             reader.onload = (data => {
                 try {
                     if (!editor.planet.deserialize(data.target?.result as string)) {
-                        pushNotification(`Invalid GEO1 format!`);
+                        pushNotification(`Invalid ${GeoPlanet.FORMAT} format!`);
                     }
                     editor.clearHistory();
                     resetTools();
@@ -334,6 +336,12 @@ function Toolbar(props: ToolbarProps) {
                                 style={{ display: 'none' }}
                                 onChange={onUploadFile}
                             />
+                        </div>
+                        <div className="tool-item" onClick={() => onFormatChange()}>
+                            <svg width="24" height="24">
+                                <use href={`#add-voxel`} />
+                            </svg>
+                            <span className="tooltip">Change format</span>
                         </div>
                     </div>
                 }

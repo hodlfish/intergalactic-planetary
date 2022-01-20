@@ -10,8 +10,10 @@ import ConfirmationModal from 'components/modals/ConfirmationModal';
 import Engine from 'scripts/engine/engine';
 import { copyToClipboard } from 'scripts/utility';
 import VoxelEditor from 'scripts/scenes/voxel-editor';
-import templates from 'scripts/objects/geo-planet/templates';
-import { getPlanets, Settings } from 'scripts/api';
+import geoTemplates from 'scripts/objects/geo-planet/templates';
+import voxTemplates from 'scripts/objects/voxel-planet/templates';
+import { getPlanets } from 'scripts/api';
+import Settings from 'scripts/settings';
 
 enum PlanetType {
     Geo, Voxel
@@ -28,6 +30,7 @@ function PlanetViewer() {
     const [editing, setEditing] = useState<boolean>(false);
     const [planetType, setPlanetType] = useState<PlanetType>();
     const [planetData, setPlanetData] = useState<string>();
+    const [confirmFormatChange, setConfirmFormatChange] = useState<boolean>(false);
     const [scene, setScene] = useState<PlanetEditor | VoxelPlanet>();
 
     // Load planet data
@@ -49,15 +52,15 @@ function PlanetViewer() {
         }
 
         // Get remote planet data
-        if (newPlanetId === 'sandbox') {
+        if (newPlanetId !== 'sandbox') {
             getPlanets([newPlanetId]).then(planetInfos => {
                 if (planetInfos.length > 0 && planetInfos[0].data) {
                     return planetInfos[0].data;
                 } else {
-                    return templates.default;
+                    return geoTemplates.default;
                 }
             }).catch(() => {
-                return templates.unminted;
+                return geoTemplates.unminted;
             }).then(data => {
                 setPlanetData(data);
                 setPlanetType(data.startsWith('GEO') ? PlanetType.Geo : PlanetType.Voxel);
@@ -65,7 +68,7 @@ function PlanetViewer() {
                 Engine.instance.curtain.fadeIn(1.0);
             });
         } else {
-            setPlanetData(templates.default);
+            setPlanetData(geoTemplates.default);
             setPlanetType(PlanetType.Geo);
             setLoading(false);
             Engine.instance.curtain.fadeIn(1.0);
@@ -78,8 +81,18 @@ function PlanetViewer() {
         }
 
         const newScene = (planetType === PlanetType.Geo) ? new PlanetEditor() : new VoxelEditor();
-        if (planetType === PlanetType.Geo && planetData.startsWith('GEO')) {
-            newScene.planet.deserialize(planetData);
+        if (planetType === PlanetType.Geo) {
+            if (planetData.startsWith('GEO')) {
+                newScene.planet.deserialize(planetData);
+            } else {
+                newScene.planet.deserialize(geoTemplates.default);
+            }
+        } else {
+            if (planetData.startsWith('VOX')) {
+                newScene.planet.deserialize(planetData);
+            } else {
+                newScene.planet.deserialize(voxTemplates.default);
+            }
         }
         setScene(newScene);
 
@@ -130,11 +143,11 @@ function PlanetViewer() {
         if(!loading && scene && editing && ((isSandbox() || isOwner()))) {
             if (scene instanceof PlanetEditor) {
                 return (
-                    <PlanetToolbar editor={scene as PlanetEditor} planetId={planetId!}/>
+                    <PlanetToolbar editor={scene as PlanetEditor} planetId={planetId!} onFormatChange={() => setConfirmFormatChange(true)}/>
                 )
             } else {
                 return (
-                    <VoxelToolbar editor={scene as VoxelEditor}  planetId={planetId!}/>
+                    <VoxelToolbar editor={scene as VoxelEditor}  planetId={planetId!} onFormatChange={() => setConfirmFormatChange(true)}/>
                 )
             }
         } else {
@@ -144,6 +157,7 @@ function PlanetViewer() {
 
     const onChangePlanetType = () => {
         setPlanetType(planetType === PlanetType.Geo ? PlanetType.Voxel : PlanetType.Geo);
+        setConfirmFormatChange(false);
     }
 
     return (
@@ -185,13 +199,18 @@ function PlanetViewer() {
                         </svg>
                     </div>
                 }
-                <div className="circle-button" onClick={() => onChangePlanetType()}>
-                    <svg>
-                        <use href="#ico"/>
-                    </svg>
-                </div>
             </div>
             {renderToolbar()}
+            {confirmFormatChange &&
+                <ConfirmationModal 
+                    title="Change Format" 
+                    description={['All your work will be lost by switching formats.', 'Are you sure?']} 
+                    onCancel={() => setConfirmFormatChange(false)}
+                    onConfirm={() => onChangePlanetType()}
+                    confirmText="Yes"
+                    cancelText="No"
+                />
+            }
         </div>
     );
 }

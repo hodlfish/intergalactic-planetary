@@ -7,6 +7,8 @@ import { COLOR_PALETTE_SIZE } from "./voxel-planet/settings";
 import Terrain from "./voxel-planet/terrain";
 
 class VoxelPlanet extends GameObject {
+    static FORMAT = 'VOX1';
+
     scenery: Scenery;
     colorPalette: ColorPalette;
     terrain: Terrain;
@@ -17,6 +19,7 @@ class VoxelPlanet extends GameObject {
         this.rotationSpeed = rotationSpeed;
         this.colorPalette = new ColorPalette(COLOR_PALETTE_SIZE);
         this.terrain = new Terrain(this.colorPalette);
+        this.engine.registerCollisionMesh(this.terrain.mesh, this);
         this.scenery = new Scenery(this.terrain, this.colorPalette)
         this.scene.add(this.terrain.mesh);
         this.scene.add(this.scenery.scene);
@@ -29,20 +32,24 @@ class VoxelPlanet extends GameObject {
         }
     }
 
+    static isFormat(data: string): boolean {
+        return data.startsWith(VoxelPlanet.FORMAT);
+    }
+
     serialize(): string {
-        return 'VOX1=' + 
+        return `${VoxelPlanet.FORMAT}=` + 
             this.terrain.serialize() + '=' +
             this.scenery.serialize() + '=' +
             this.colorPalette.serialize();
     }
 
-    deserialize(vox1Data: string): boolean {
+    deserialize(voxData: string): boolean {
         try {
-            if (!verifyBase64(vox1Data)) {
+            if (!verifyBase64(voxData)) {
                 throw Error(`Invalid base64 characters!`);
             }
-            const [format, terrainData, sceneryData, colorData] = vox1Data.split('=');
-            if (format !== 'VOX1') {
+            const [format, terrainData, sceneryData, colorData] = voxData.split('=');
+            if (format !== VoxelPlanet.FORMAT) {
                 throw Error(`Unexpected format ${format}!`);
             }
             if (!this.terrain.deserialize(terrainData)) throw new Error('Invalid terrain data!');

@@ -14,21 +14,25 @@ import { CallbackSet } from 'scripts/engine/helpers';
 
 export interface EditorTool {
     name: string,
-    icon: string
+    icon: string,
+    description: string
 }
 
 export const EditorTools = {
     add: {
         name: 'Add',
-        icon: 'add-voxel'
+        icon: 'add-voxel',
+        description: 'Add block'
     },
     remove: {
         name: 'Remove',
-        icon: 'remove-voxel'
+        icon: 'remove-voxel',
+        description: 'Remove block'
     },
     paint: {
         name: 'Paint',
-        icon: 'brush'
+        icon: 'brush',
+        description: 'Paint block'
     },
     items: {
         name: 'Items',
@@ -42,7 +46,8 @@ export const EditorTools = {
     },
     settings: {
         name: 'Settings',
-        icon: 'gear'
+        icon: 'gear',
+        description: 'Settings'
     }
 }
 
@@ -69,8 +74,9 @@ class VoxelEditor extends GameObject {
     constructor() {
         super();
         this.grid = new Grid(Terrain.GRID_SIZE, Terrain.WIDTH);
+        this.grid.visible = false;
         this.selectionBox = new SelectionBox(1, Terrain.WIDTH);
-        this.grid.visible = true;
+        this.selectionBox.visible = false;
         this.color = 0;
         this.isDrawing = false;
         this.scene.add(this.grid.scene);
@@ -184,35 +190,38 @@ class VoxelEditor extends GameObject {
     handleKeyboardMouse(state: UpdateState) {
         const cursorPosition = state.keyboardMouse.position.screenCoordinates.toArray();
         const intersects = this.engine.raycastObjects(cursorPosition, [this.planet.terrain.mesh, this.grid.mesh]);
-
-        if (intersects.length > 0) {
-            this.selectionBox.visible = true;
-            this.select(intersects[0]);
-        } else {
-            this.selectionBox.visible = false;
-        }
-
-        if (state.keyboardMouse.inputEvents.includes('left-click-down')) {
+        if (this.tool) {
             if (intersects.length > 0) {
-                this.pressDownIntersect = intersects[0];
-                this.isDrawing = true;
-                this.cameraController.setEnabled(false);
+                this.select(intersects[0]);
             } else {
+                this.selectionBox.setEmpty();
+            }
+    
+            if (state.keyboardMouse.inputEvents.includes('left-click-down')) {
+                if (intersects.length > 0) {
+                    this.pressDownIntersect = intersects[0];
+                    this.isDrawing = true;
+                    this.cameraController.setEnabled(false);
+                } else {
+                    this.pressDownIntersect = undefined;
+                }
+            }
+    
+            if(state.keyboardMouse.inputEvents.includes('left-click-up')) {
+                if (intersects.length > 0 && this.pressDownIntersect) {
+                    this.edit(intersects[0]);
+                }
+                this.cameraController.setEnabled(true);
+                this.isDrawing = false;
                 this.pressDownIntersect = undefined;
             }
-        }
-
-        if(state.keyboardMouse.inputEvents.includes('left-click-up')) {
-            if (intersects.length > 0 && this.pressDownIntersect) {
-                this.edit(intersects[0]);
-            }
-            this.cameraController.setEnabled(true);
-            this.isDrawing = false;
-            this.pressDownIntersect = undefined;
+        } else {
+            this.selectionBox.setEmpty();
         }
     }
 
     select(intersect: THREE.Intersection) {
+        // Set box location and size
         let startPosition = undefined;
         let curPosition = undefined;
         if (this.tool === EditorTools.add) {
@@ -232,6 +241,16 @@ class VoxelEditor extends GameObject {
                 startPosition = this.planet.terrain.coordinateToPosition(...startCoord.toArray());
             }
         }
+
+        // Set Color
+        if (this.tool === EditorTools.add) {
+            this.selectionBox.setColor(new THREE.Color(0, 1, 0));
+        } else if(this.tool === EditorTools.paint) {
+            this.selectionBox.setColor(this.planet.colorPalette.colors[this.color].clone().multiplyScalar(1.1));
+        } else {
+            this.selectionBox.setColor(new THREE.Color(1, 0, 0));
+        }
+
         if (startPosition) {
             const midPoint = startPosition.clone().add(curPosition).multiplyScalar(0.5);
             const scale = startPosition.clone().sub(curPosition);
@@ -292,6 +311,7 @@ class VoxelEditor extends GameObject {
         this.background.dispose();
         this.planet.dispose();
         this.grid.dispose();
+        this.selectionBox.dispose();
         this.cameraController.dispose();
         super.dispose();
     }

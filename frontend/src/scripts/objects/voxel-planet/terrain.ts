@@ -129,9 +129,9 @@ class Terrain {
     }
 
     _performBlockAction(startCoord: THREE.Vector3, endCoord: THREE.Vector3, callback: (x: number, y: number, z: number) => any) {
-        for(let i = Math.min(startCoord.x, endCoord.x); i <= Math.max(startCoord.x, endCoord.x); i++) {
-            for(let j = Math.min(startCoord.y, endCoord.y); j <= Math.max(startCoord.y, endCoord.y); j++) {
-                for(let k = Math.min(startCoord.z, endCoord.z); k <= Math.max(startCoord.z, endCoord.z); k++) {
+        for(let i = Math.max(Math.min(startCoord.x, endCoord.x), 0); i <= Math.min(Math.max(startCoord.x, endCoord.x), Terrain.GRID_SIZE - 1); i++) {
+            for(let j = Math.max(Math.min(startCoord.y, endCoord.y), 0); j <= Math.min(Math.max(startCoord.y, endCoord.y), Terrain.GRID_SIZE - 1); j++) {
+                for(let k = Math.max(Math.min(startCoord.z, endCoord.z), 0); k <= Math.min(Math.max(startCoord.z, endCoord.z), Terrain.GRID_SIZE - 1); k++) {
                     callback(i, j, k);
                 }
             }
