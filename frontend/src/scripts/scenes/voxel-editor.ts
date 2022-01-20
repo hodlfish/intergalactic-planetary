@@ -174,16 +174,37 @@ class VoxelEditor extends GameObject {
         if (state.touch.touchCount === 1 && state.touch.position) {
             const cursorPosition = state.touch.position.screenCoordinates.toArray();
             const intersects = this.engine.raycastObjects(cursorPosition, [this.planet.terrain.mesh, this.grid.mesh]);
-            if (state.touch.inputEvents.includes('touch-down') && this.tool && intersects.length > 0) {
-                this.cameraController.setEnabled(false);
-                this.isDrawing = true;
-                this.edit(intersects[0]);
-            }
-        }
+            if (this.tool) {
+                if (intersects.length > 0) {
+                    this.select(intersects[0]);
+                } else {
+                    this.selectionBox.setEmpty();
+                }
 
-        if (state.touch.inputEvents.includes('touch-up')) {
+                if (state.touch.inputEvents.includes('touch-down')) {
+                    if (intersects.length > 0) {
+                        this.pressDownIntersect = intersects[0];
+                        this.isDrawing = true;
+                        this.cameraController.setEnabled(false);
+                    } else {
+                        this.pressDownIntersect = undefined;
+                    }
+                }
+
+                if(state.touch.inputEvents.includes('touch-up')) {
+                    if (intersects.length > 0 && this.pressDownIntersect) {
+                        this.edit(intersects[0]);
+                    }
+                    this.cameraController.setEnabled(true);
+                    this.isDrawing = false;
+                    this.pressDownIntersect = undefined;
+                }
+            } else {
+                this.selectionBox.setEmpty();
+            }
+        } else {
             this.cameraController.setEnabled(true);
-            this.isDrawing = false;
+            this.pressDownIntersect = undefined;
         }
     }
 
@@ -243,7 +264,7 @@ class VoxelEditor extends GameObject {
         }
 
         // Set Color
-        if (this.tool === EditorTools.add) {
+        if ([EditorTools.add, EditorTools.items].includes(this.tool as EditorTool)) {
             this.selectionBox.setColor(new THREE.Color(0, 1, 0));
         } else if(this.tool === EditorTools.paint) {
             this.selectionBox.setColor(this.planet.colorPalette.colors[this.color].clone().multiplyScalar(1.1));

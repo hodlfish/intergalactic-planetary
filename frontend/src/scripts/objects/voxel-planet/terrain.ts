@@ -173,6 +173,15 @@ class Terrain {
         }
     }
 
+    clear() {
+        this.emitBeforeUpdate();
+        this._performBlockAction(Terrain.MIN_GRID, Terrain.MAX_GRID, (x,y,z) => {
+            this.depthField[x][y][z] = Terrain.EMPTY_ID;
+        });
+        this.generate();
+        this.emitAfterUpdate();
+    }
+
     pointToCoord(point: THREE.Vector3, normal: THREE.Vector3, reverse = false) {
         const offsetPoint = point.clone().add(normal.clone().multiplyScalar(Terrain.BLOCK_SIZE / 2 * (reverse ? -1 : 1)));
         return this.positionToCoordinate(offsetPoint);

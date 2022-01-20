@@ -152,9 +152,13 @@ function VoxelToolbar(props: ToolbarProps) {
                     <span className="tooltip">Toggle Grid</span>
                 </div>
                 <div className={`tool-item`} onClick={() => setConfirmReset(true)}>
-                        <div>Reset</div>
-                        <span className="tooltip">Reset planet</span>
-                    </div>
+                    <div>Reset</div>
+                    <span className="tooltip">Reset planet</span>
+                </div>
+                <div className={`tool-item`} onClick={() => editor.planet.terrain.clear()}>
+                    <div>Empty</div>
+                    <span className="tooltip">Empty planet</span>
+                </div>
                 <div className={`tool-item`} onClick={() => editor.undo()}>
                     <div>Undo</div>
                     <span className="tooltip">Undo changes</span>
