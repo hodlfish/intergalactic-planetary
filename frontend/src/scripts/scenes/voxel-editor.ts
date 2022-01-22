@@ -188,6 +188,7 @@ class VoxelEditor extends GameObject {
                         this.cameraController.setEnabled(false);
                     } else {
                         this.pressDownIntersect = undefined;
+                        this.cameraController.setEnabled(true);
                     }
                 }
 
@@ -202,7 +203,7 @@ class VoxelEditor extends GameObject {
             } else {
                 this.selectionBox.setEmpty();
             }
-        } else {
+        } else if (state.touch.touchCount > 1) {
             this.cameraController.setEnabled(true);
             this.pressDownIntersect = undefined;
         }
@@ -248,19 +249,20 @@ class VoxelEditor extends GameObject {
         if (this.tool === EditorTools.add) {
             const curCoord = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal);
             curPosition = this.planet.terrain.coordinateToPosition(...curCoord.toArray());
-            this.selectionBox.setColor(new THREE.Color(0, 1, 0));
             if (this.pressDownIntersect) {
                 const startCoord = this.planet.terrain.pointToCoord(this.pressDownIntersect.point, this.pressDownIntersect.face!.normal);
                 startPosition = this.planet.terrain.coordinateToPosition(...startCoord.toArray());
             }
-        } else {
+        } else if ([EditorTools.remove, EditorTools.paint].includes(this.tool as EditorTool)) {
             const end = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal, true);
             curPosition = this.planet.terrain.coordinateToPosition(end.x, end.y, end.z);
-            this.selectionBox.setColor(new THREE.Color(1, 0, 0));
             if (this.pressDownIntersect) {
                 const startCoord = this.planet.terrain.pointToCoord(this.pressDownIntersect.point, this.pressDownIntersect.face!.normal, true);
                 startPosition = this.planet.terrain.coordinateToPosition(...startCoord.toArray());
             }
+        } else {
+            const cur = this.planet.terrain.pointToCoord(intersect.point, intersect.face!.normal, true);
+            curPosition = this.planet.terrain.coordinateToPosition(cur.x, cur.y, cur.z);
         }
 
         // Set Color

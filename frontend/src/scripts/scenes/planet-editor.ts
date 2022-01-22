@@ -78,7 +78,7 @@ export const EditorTools = {
         name: 'Settings',
         icon: 'gear',
         brushChannel: BrushChannel.None,
-        description: 'Tools'
+        description: 'Settings'
     }
 }
 

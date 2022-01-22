@@ -48,7 +48,10 @@ export const ModelPacks = [
             {id: 22, sort: 'B3', name: 'Grass'},
             {id: 23, sort: 'A8', name: 'Deadwood'},
             {id: 24, sort: 'D5', name: 'Monolith'},
-            {id: 25, sort: 'B5', name: 'Flower'}
+            {id: 25, sort: 'B5', name: 'Flower'},
+            {id: 26, sort: 'F0', name: 'Lighthouse'},
+            {id: 27, sort: 'F1', name: 'Watch Tower'},
+            {id: 28, sort: 'F2', name: 'Well'},
         ]
     }
 ] as ModelPack[];
