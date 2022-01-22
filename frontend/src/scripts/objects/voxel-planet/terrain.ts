@@ -7,7 +7,7 @@ import { COLOR_PALETTE_SIZE } from './settings';
 
 class Terrain {
     static GRID_SIZE = 16;
-    static WIDTH = 5.0;
+    static WIDTH = 4.0;
     static BLOCK_SIZE = Terrain.WIDTH / Terrain.GRID_SIZE;
     static EMPTY_ID = 15;
     static MIN_GRID = new THREE.Vector3(0, 0, 0);

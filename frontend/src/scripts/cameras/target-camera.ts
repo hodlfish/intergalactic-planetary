@@ -81,7 +81,7 @@ class TargetCamera extends GameObject {
         if(state.keyboardMouse.scrollDelta) {
             this.velocity.z += state.keyboardMouse.scrollDelta * state.deltaTime * this.zoomDistanceAcceleration * TargetCamera.MOUSE_ZOOM_ACCELERATION;
         }
-        if (state.keyboardMouse.inputStates.get('left-click')) {
+        if (state.keyboardMouse.inputStates.get('left-click') || state.keyboardMouse.inputStates.get('right-click')) {
             if (!this.dragging) {
                 this.dragging = true;
             }
@@ -91,7 +91,7 @@ class TargetCamera extends GameObject {
                 this.velocity.y += deltaCoords.y * TargetCamera.MOUSE_PAN_ACCELERATION * state.deltaTime;
             }
         }
-        if(state.keyboardMouse.inputEvents.includes('left-click-up')) {
+        if(state.keyboardMouse.inputEvents.includes('left-click-up') || state.keyboardMouse.inputStates.get('right-click-up')) {
             this.dragging = false;
         }
 
@@ -132,7 +132,7 @@ class TargetCamera extends GameObject {
     }
 
     setCursor(state: UpdateState) {
-        if (state.keyboardMouse.inputStates.get('left-click')) {
+        if (state.keyboardMouse.inputStates.get('left-click') || state.keyboardMouse.inputStates.get('right-click')) {
             this.engine.setCursor(CursorTypes.grabbing);
         } else {
             this.engine.setCursor(CursorTypes.default);
