@@ -24,4 +24,4 @@ export const Testnet = {
 }
 
 // NOTE: Default export settings will be used across the application!
-export default Testnet;
+export default Mainnet;

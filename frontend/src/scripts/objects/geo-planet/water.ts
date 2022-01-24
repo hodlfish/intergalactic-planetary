@@ -1,11 +1,10 @@
 import * as THREE from 'three';
 import waterShader from 'scripts/shaders/geo-planet/water-shader';
 import { base64ToBinary, binaryToBase64 } from 'scripts/base-64';
-import {
-    MIN_HEIGHT, HEIGHT_RANGE, deserializeColor, serializeColor
-} from './settings';
+import { MIN_HEIGHT, HEIGHT_RANGE } from './settings';
 import Engine, { LayerDefinitions } from 'scripts/engine/engine';
 import { CallbackSet } from 'scripts/engine/helpers';
+import { deserializeColor, serializeColor } from '../color-palette';
 
 
 class Water {

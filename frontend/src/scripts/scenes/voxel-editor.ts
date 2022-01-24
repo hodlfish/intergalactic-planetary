@@ -11,6 +11,7 @@ import { Intersection } from 'three';
 import SelectionBox from 'scripts/objects/voxel-planet/selection-box';
 import templates from 'scripts/objects/voxel-planet/templates';
 import { CallbackSet } from 'scripts/engine/helpers';
+import { GRID_SIZE, WIDTH } from 'scripts/objects/voxel-planet/settings';
 
 export interface EditorTool {
     name: string,
@@ -73,9 +74,9 @@ class VoxelEditor extends GameObject {
 
     constructor() {
         super();
-        this.grid = new Grid(Terrain.GRID_SIZE, Terrain.WIDTH);
+        this.grid = new Grid(GRID_SIZE, WIDTH);
         this.grid.visible = false;
-        this.selectionBox = new SelectionBox(1, Terrain.WIDTH);
+        this.selectionBox = new SelectionBox(1, WIDTH);
         this.selectionBox.visible = false;
         this.color = 0;
         this.isDrawing = false;
