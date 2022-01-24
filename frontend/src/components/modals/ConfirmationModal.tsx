@@ -14,13 +14,15 @@ function ConfirmationModal(props: ConfirmationModalProps) {
 
     return (
         <Modal onClose={props.onCancel}>
-            <div className="title">{title}</div>
-            {description.map((paragraph, index) => 
-                <div key={index} className="info">{paragraph}</div>    
-            )}
-            <div className="button-panel">
-                <div onClick={onCancel}>{cancelText}</div>
-                <div onClick={onConfirm}>{confirmText}</div>
+            <div className="small">
+                <div className="title">{title}</div>
+                {description.map((paragraph, index) => 
+                    <div key={index} className="info">{paragraph}</div>    
+                )}
+                <div className="button-panel">
+                    <div onClick={onCancel}>{cancelText}</div>
+                    <div onClick={onConfirm}>{confirmText}</div>
+                </div>
             </div>
         </Modal>
     );

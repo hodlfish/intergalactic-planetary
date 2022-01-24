@@ -7,8 +7,6 @@ import { UpdateState } from 'scripts/engine/engine';
 import { Model } from 'scripts/model-loader';
 import TargetCamera from 'scripts/cameras/target-camera';
 import { CallbackSet } from 'scripts/engine/helpers';
-import { getPlanets } from 'scripts/api';
-import Templates from 'scripts/objects/geo-planet/templates';
 
 export interface EditorTool {
     name: string,
@@ -80,7 +78,7 @@ export const EditorTools = {
         name: 'Settings',
         icon: 'gear',
         brushChannel: BrushChannel.None,
-        description: 'Tools'
+        description: 'Settings'
     }
 }
 
@@ -88,7 +86,6 @@ class PlanetEditorScene extends GameObject {
     static MAX_STATE_STACK = 50;
 
     axes: Axes;
-    planetId: string;
     planet: Planet;
     background: Background;
     tool: EditorTool | undefined;
@@ -106,9 +103,8 @@ class PlanetEditorScene extends GameObject {
     _saveStateTimeout: any;
     onLoadEvent?: (success: boolean, message?: string) => void;
 
-    constructor(planetId: string) {
+    constructor() {
         super();
-        this.planetId = planetId;
         this.axes = new Axes(100);
         this.axes.visible = false;
         this.lastSaveState = '';
@@ -159,46 +155,6 @@ class PlanetEditorScene extends GameObject {
                 this._saveStateTimeout = undefined;
             }, 500);
         }
-    }
-
-    initialize() {
-        this._preventChangeStack = true;
-        if (this.planetId === 'sandbox') {
-            this.planet.deserialize(Templates.default);
-            if (this.onLoadEvent) {
-                this.onLoadEvent(true);
-            }
-        } else {
-            getPlanets([this.planetId]).then(planetInfos => {
-                if (planetInfos.length > 0 && planetInfos[0].data) {
-                    const data = planetInfos[0].data;
-                    if (this.planet.deserialize(data)) {
-                        this.lastSaveState = data;
-                        if (this.onLoadEvent) {
-                            this.onLoadEvent(true);
-                        }
-                    } else {
-                        this.planet.deserialize(Templates.default);
-                        this.lastSaveState = Templates.default;
-                        if (this.onLoadEvent) {
-                            this.onLoadEvent(true, `Failed to load planet ${this.planetId}!`);
-                        }
-                    }
-                } else {
-                    this.planet.deserialize(Templates.default);
-                    this.lastSaveState = Templates.default;
-                    if (this.onLoadEvent) {
-                        this.onLoadEvent(true, `Planet ${this.planetId} has not been edited!`);
-                    }
-                }
-            }).catch(() => {
-                this.planet.deserialize(Templates.unminted);
-                if (this.onLoadEvent) {
-                    this.onLoadEvent(true, `Planet ${this.planetId} is not minted!`);
-                }
-            })
-        }
-        this._preventChangeStack = false;
     }
 
     update(state: UpdateState) {
@@ -343,10 +299,6 @@ class PlanetEditorScene extends GameObject {
     setBrushSize(size: number) {
         size = Math.min(Math.max(0.0, size), 1.0);
         this._brushSize = 1.0 - (size / 10.0);
-    }
-
-    isSandbox() {
-        return this.planetId === 'sandbox';
     }
 
     isUnsaved() {

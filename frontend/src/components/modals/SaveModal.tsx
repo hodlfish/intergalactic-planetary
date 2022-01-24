@@ -6,11 +6,13 @@ import { getUpdateTransaction, pollTransaction, TransactionDetails } from 'scrip
 import Modal from './Modal';
 import Loading from 'components/Loading';
 import PlanetEditor from 'scripts/scenes/planet-editor';
+import VoxelEditor from 'scripts/scenes/voxel-editor';
+
 import Settings from 'scripts/settings';
 
 interface SaveModalProps {
     planetId: string,
-    editor: PlanetEditor,
+    editor: PlanetEditor | VoxelEditor,
     onClose: any,
     onSave: any
 }
