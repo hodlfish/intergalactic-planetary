@@ -29,7 +29,7 @@ function PlanetViewer() {
     const [loading, setLoading] = useState<boolean>(true);
     const [editing, setEditing] = useState<boolean>(false);
     const [planetType, setPlanetType] = useState<PlanetType>();
-    const [planetData, setPlanetData] = useState<string>();
+    const [planetData, setPlanetData] = useState<string | undefined>();
     const [confirmFormatChange, setConfirmFormatChange] = useState<boolean>(false);
     const [scene, setScene] = useState<PlanetEditor | VoxelPlanet>();
 
@@ -42,7 +42,6 @@ function PlanetViewer() {
             pushNotification(`Planet ${newPlanetId} does not exist!`);
             return;
         }
-        setPlanetId(newPlanetId);
 
         // Check edit mode
         const parsed = new URLSearchParams(location.search);
@@ -66,14 +65,16 @@ function PlanetViewer() {
                 setPlanetType(data.startsWith('GEO') ? PlanetType.Geo : PlanetType.Voxel);
                 setLoading(false);
                 Engine.instance.curtain.fadeIn(1.0);
+                setPlanetId(newPlanetId);
             });
         } else {
             setPlanetData(geoTemplates.default);
             setPlanetType(PlanetType.Geo);
             setLoading(false);
             Engine.instance.curtain.fadeIn(1.0);
+            setPlanetId(newPlanetId);
         }
-    }, [location.search, navigate, params])
+    }, [location.search, navigate, params!.id])
 
     useEffect(() => {
         if (!planetType === undefined || planetData === undefined) {

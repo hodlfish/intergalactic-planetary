@@ -12,6 +12,8 @@ import Engine from 'scripts/engine/engine';
 import { useLocation } from 'react-router';
 import Music from 'scripts/music';
 import Loading from 'components/Loading';
+import UpdatedPlanetsModal from './modals/UpdatedPlanetsModal';
+import AboutModal from './modals/AboutModal';
 
 const links = [
     { name: 'Galaxy', path: '/galaxy', icon: '#galaxy' },
@@ -25,7 +27,9 @@ function Menu() {
     const [loadingPlanets, setLoadingPlanets] = useState<boolean>(false);
     const [ownedPlanets, setOwnerPlanets] = useGlobalState('ownedPlanets');
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [aboutModalOpen, setAboutModalOpen] = useState<boolean>(false);
     const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
+    const [updatedPlanetsModalOpen, setUpdatedPlanetsModalOpen] = useState<boolean>(false);
     const [musicMuted, setMusicMuted] = useState<boolean>(true);
 
     useEffect(() => {
@@ -54,9 +58,19 @@ function Menu() {
         }
     }
 
+    const onOpenAboutModal = () => {
+        setIsOpen(false);
+        setAboutModalOpen(true);
+    }
+
     const onOpenMintModal = () => {
         setIsOpen(false);
         setMintModalOpen(true);
+    }
+
+    const onOpenUpdatedPlanetsModal = () => {
+        setIsOpen(false);
+        setUpdatedPlanetsModalOpen(true);
     }
 
     const onPlanetClicked = (planetId: string) => {
@@ -113,63 +127,79 @@ function Menu() {
     }
 
     return (
-        <ClickAwayListener onClickAway={() => setIsOpen(false)}>
-            <div id="menu-component">
-                {mintModalOpen && <MintModal onClose={() => setMintModalOpen(false)}/> }
-                <div id="menu-open" className={!isOpen ? 'hidden' : '' }>
-                    <div id="menu-header">
-                        <svg id="icon" className={isOpen ? 'selected' : ''} onClick={() => setIsOpen(!isOpen)}>
+        <>
+            {aboutModalOpen && <AboutModal onClose={() => setAboutModalOpen(false)}/>}
+            {mintModalOpen && <MintModal onClose={() => setMintModalOpen(false)}/> }
+            {updatedPlanetsModalOpen && <UpdatedPlanetsModal onClose={() => setUpdatedPlanetsModalOpen(false)}/>}
+            <ClickAwayListener onClickAway={() => setIsOpen(false)}>
+                <div id="menu-component">
+                    <div id="menu-open" className={!isOpen ? 'hidden' : '' }>
+                        <div id="menu-header">
+                            <svg id="icon" className={isOpen ? 'selected' : ''} onClick={() => setIsOpen(!isOpen)}>
+                                <use href="#hamburger"/>
+                            </svg>
+                            <div id="title">Intergalactic Planetary</div>
+                        </div>
+                        <div id="menu-content">
+                            {links.map((link: any) =>
+                                <div key={link.name} className="navigation-link selectable" onClick={() => onNavigate(link)}>
+                                    <svg>
+                                        <use href={link.icon}/>
+                                    </svg>
+                                    <div>{link.name}</div>
+                                </div>
+                            )}
+                            <div key="mint" className="navigation-link selectable" onClick={() => onOpenMintModal()}>
+                                <svg>
+                                    <use href="#ico"/>
+                                </svg>
+                                <div>Mint</div>
+                            </div>
+                            <div key="recently-changed" className="navigation-link selectable" onClick={() => onOpenUpdatedPlanetsModal()}>
+                                <svg>
+                                    <use href="#refresh"/>
+                                </svg>
+                                <div>Recently Changed</div>
+                            </div>
+                            <div key="random" className="navigation-link selectable" onClick={() => randomSystem()}>
+                                <svg>
+                                    <use href="#dice"/>
+                                </svg>
+                                <div>Random System</div>
+                            </div>
+                            <div key="about" className="navigation-link selectable" onClick={() => onOpenAboutModal()}>
+                                <svg>
+                                    <use href="#question-mark"/>
+                                </svg>
+                                <div>About</div>
+                            </div>
+                            <div key="music" className="navigation-link" onPointerDown={() => enableAudio()}>
+                                <svg>
+                                    <use href={musicMuted ? '#muted' : '#unmuted'}/>
+                                </svg>
+                                <div>
+                                    <input type="range" defaultValue={0.0} min="0.0" max="1.0" step="0.1" onChange={(e: any) => onVolumeChange(e.target.value)} />
+                                </div>
+                            </div>
+                            <Wallet/>
+                            {(wallet) &&
+                                <>
+                                    <div className="section-header">My Planets</div>
+                                    <div id="owned-planets-panel">
+                                        {renderOwnedPlanets()}
+                                    </div>
+                                </>
+                            }
+                        </div>
+                    </div>
+                    <div className={'circle-button' + (isOpen ? ' hidden' : '') } onClick={() => setIsOpen(!isOpen)}>
+                        <svg id="icon" className={isOpen ? 'selected' : ''}>
                             <use href="#hamburger"/>
                         </svg>
-                        <div id="title">Intergalactic Planetary</div>
-                    </div>
-                    <div id="menu-content">
-                        {links.map((link: any) =>
-                            <div key={link.name} className="navigation-link selectable" onClick={() => onNavigate(link)}>
-                                <svg>
-                                    <use href={link.icon}/>
-                                </svg>
-                                <div>{link.name}</div>
-                            </div>
-                        )}
-                        <div key="mint" className="navigation-link selectable" onClick={() => onOpenMintModal()}>
-                            <svg>
-                                <use href="#ico"/>
-                            </svg>
-                            <div>Mint</div>
-                        </div>
-                        <div key="random" className="navigation-link selectable" onClick={() => randomSystem()}>
-                            <svg>
-                                <use href="#dice"/>
-                            </svg>
-                            <div>Random</div>
-                        </div>
-                        <div key="music" className="navigation-link" onPointerDown={() => enableAudio()}>
-                            <svg>
-                                <use href={musicMuted ? '#muted' : '#unmuted'}/>
-                            </svg>
-                            <div>
-                                <input type="range" defaultValue={0.0} min="0.0" max="1.0" step="0.1" onChange={(e: any) => onVolumeChange(e.target.value)} />
-                            </div>
-                        </div>
-                        <Wallet/>
-                        {(wallet) &&
-                            <>
-                                <div className="section-header">My Planets</div>
-                                <div id="owned-planets-panel">
-                                    {renderOwnedPlanets()}
-                                </div>
-                            </>
-                        }
                     </div>
                 </div>
-                <div className={'circle-button' + (isOpen ? ' hidden' : '') } onClick={() => setIsOpen(!isOpen)}>
-                    <svg id="icon" className={isOpen ? 'selected' : ''}>
-                        <use href="#hamburger"/>
-                    </svg>
-                </div>
-            </div>
-        </ClickAwayListener>
+            </ClickAwayListener>
+        </>
     );
 }
 

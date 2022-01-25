@@ -1,0 +1,14 @@
+#search-button-component {
+    display: flex;
+    align-items: center;
+
+    input {
+        @include display-panel;
+        width: 120px;
+        height: 40px;
+        font-size: 20px;
+        outline: none;
+        border-style: none;
+        text-align: center;
+    }
+}

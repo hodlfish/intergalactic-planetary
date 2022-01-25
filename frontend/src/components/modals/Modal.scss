@@ -11,6 +11,7 @@
     .small {
         width: 280px;
         margin: 10px;
+        max-height: 600px;
     }
 
     #modal-panel {
@@ -26,17 +27,26 @@
 
         #close-button {
             position: absolute;
-            right: 8px;
-            top: 24px;
-            width: 32px;
-            height: 32px;
+            right: 12px;
+            top: 12px;
+            width: 40px;
+            height: 40px;
             cursor: pointer;
+            stroke: $icon-primary;
         }
 
         .title {
             text-align: center;
             font-size: 24px;
             margin: 20px 40px;
+        }
+
+        .button {
+            @include display-panel-selectable;
+            margin: 12px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
         }
 
         .info {

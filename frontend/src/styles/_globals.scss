@@ -182,6 +182,17 @@ canvas {
     }
 }
 
+.menu-options-panel {
+    border-style: solid none solid none;
+    border-color: $bg-2;
+    overflow: auto;
+    max-height: 300px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow: auto;
+}
+
 .menu-option {
     @include display-panel;
     display: grid;
