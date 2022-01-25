@@ -4,6 +4,7 @@ import Galaxy from "scripts/scenes/galaxy";
 import GalacticSpec from "scripts/galactic-spec";
 import Engine from 'scripts/engine/engine';
 import { useNavigate, useLocation } from 'react-router';
+import SearchButton from "components/SearchButton";
 
 function GalaxyViewer() {
     const location = useLocation();
@@ -96,6 +97,9 @@ function GalaxyViewer() {
 
     return (
         <div id="galaxy-component">
+            <div id="button-panel">
+                <SearchButton/>
+            </div>
             {displaySystem && 
                 <div id="footer">
                     <div id="info-panel">

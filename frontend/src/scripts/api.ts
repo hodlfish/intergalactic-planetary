@@ -2,6 +2,7 @@ import { LCDClient, MsgExecuteContract, SimplePublicKey, TxInfo } from '@terra-m
 import { Fee } from '@terra-money/terra.js/dist/core/Fee';
 import Settings from './settings';
 import { sleep } from './utility';
+import axios from 'axios';
 
 const terra = new LCDClient({
     URL: Settings.LCD_URL,
@@ -89,6 +90,56 @@ export function getTotalPlanets() {
     ).then((result: any) => {
         return result;
     });
+}
+
+interface Msg {
+    type: string,
+    value: {
+        execute_msg: {
+            update: {
+                token_id: string
+            }
+        }
+    }
+}
+
+interface Transaction {
+    id: number,
+    tx: {
+        type: string,
+        value: {
+            msg: Msg[]
+        }
+    }
+}
+
+interface RecentEditResponse {
+    limit: number,
+    next: number,
+    txs: Transaction[]
+}
+
+interface RenderEdits {
+    planetIds: string[],
+    offset: number,
+    limit: number
+}
+
+export function getRecentEdits(offset = 0, limit = 100): Promise<RenderEdits> {
+    return axios.get(`https://fcd.terra.dev/v1/txs?offset=${offset}&limit=${limit}&account=${Settings.NFT_CONTRACT}`).then(response => {
+        const transactions = (response.data as RecentEditResponse).txs;
+        const planetIds = [] as string[];
+        transactions.forEach(transaction => {
+            if (transaction.tx.value.msg[0].type === 'wasm/MsgExecuteContract' && transaction.tx.value.msg[0].value.execute_msg.update) {
+                planetIds.push(transaction.tx.value.msg[0].value.execute_msg.update.token_id)
+            }
+        })
+        return {
+            planetIds: planetIds,
+            offset: (transactions.length > 0) ? transactions[transactions.length - 1].id : offset,
+            limit: limit
+        }
+    })
 }
 
 // Returns a mint transaction and fee
