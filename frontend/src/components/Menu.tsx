@@ -1,4 +1,3 @@
-import React from 'react';
 import ClickAwayListener from "react-click-away-listener";
 import { useNavigate } from "react-router";
 import Wallet from './Wallet';
@@ -12,7 +11,6 @@ import Engine from 'scripts/engine/engine';
 import { useLocation } from 'react-router';
 import Music from 'scripts/music';
 import Loading from 'components/Loading';
-import UpdatedPlanetsModal from './modals/UpdatedPlanetsModal';
 import AboutModal from './modals/AboutModal';
 
 const links = [
@@ -29,7 +27,6 @@ function Menu() {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [aboutModalOpen, setAboutModalOpen] = useState<boolean>(false);
     const [mintModalOpen, setMintModalOpen] = useState<boolean>(false);
-    const [updatedPlanetsModalOpen, setUpdatedPlanetsModalOpen] = useState<boolean>(false);
     const [musicMuted, setMusicMuted] = useState<boolean>(true);
 
     useEffect(() => {
@@ -66,11 +63,6 @@ function Menu() {
     const onOpenMintModal = () => {
         setIsOpen(false);
         setMintModalOpen(true);
-    }
-
-    const onOpenUpdatedPlanetsModal = () => {
-        setIsOpen(false);
-        setUpdatedPlanetsModalOpen(true);
     }
 
     const onPlanetClicked = (planetId: string) => {
@@ -130,7 +122,6 @@ function Menu() {
         <>
             {aboutModalOpen && <AboutModal onClose={() => setAboutModalOpen(false)}/>}
             {mintModalOpen && <MintModal onClose={() => setMintModalOpen(false)}/> }
-            {updatedPlanetsModalOpen && <UpdatedPlanetsModal onClose={() => setUpdatedPlanetsModalOpen(false)}/>}
             <ClickAwayListener onClickAway={() => setIsOpen(false)}>
                 <div id="menu-component">
                     <div id="menu-open" className={!isOpen ? 'hidden' : '' }>
@@ -154,12 +145,6 @@ function Menu() {
                                     <use href="#ico"/>
                                 </svg>
                                 <div>Mint</div>
-                            </div>
-                            <div key="recently-changed" className="navigation-link selectable" onClick={() => onOpenUpdatedPlanetsModal()}>
-                                <svg>
-                                    <use href="#refresh"/>
-                                </svg>
-                                <div>Recently Changed</div>
                             </div>
                             <div key="random" className="navigation-link selectable" onClick={() => randomSystem()}>
                                 <svg>
