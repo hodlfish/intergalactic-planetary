@@ -14,3 +14,5 @@ Twitter - https://twitter.com/IntergalacticPt
 Discord - https://discord.com/invite/JXekfYHjQY
 
 HODLFish Labs - https://twitter.com/hodlfishlabs
+
+Assets Bundle - https://drive.google.com/drive/u/4/folders/1-k_fBybtFHNf96qi_a0DJ8WoBAjfA6Tc

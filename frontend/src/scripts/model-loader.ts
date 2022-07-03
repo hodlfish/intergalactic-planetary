@@ -61,7 +61,32 @@ export const ModelPacks = [
             {id: 35, sort: 'E4', name: 'Crystal'},
             {id: 36, sort: 'D6', name: 'Stone Head'},
             {id: 37, sort: 'D7', name: 'Stone Arch'},
-            {id: 38, sort: 'F3', name: 'Sword'}
+            {id: 38, sort: 'F3', name: 'Sword'},
+            {id: 39, sort: 'F4', name: 'Torri'},
+            {id: 40, sort: 'F5', name: 'Crates'},
+            {id: 41, sort: 'F5', name: 'Barrels'},
+            {id: 42, sort: 'D8', name: 'Flat Rock 2'},
+            {id: 43, sort: 'D9', name: 'Pebbles'},
+            {id: 44, sort: 'D10', name: 'Pebble'},
+            {id: 45, sort: 'D11', name: 'Slate Rock'},
+            {id: 46, sort: 'D12', name: 'Rock Stack'},
+            {id: 47, sort: 'F6', name: 'Beehive'},
+            {id: 48, sort: 'F7', name: 'Windmill'},
+            {id: 49, sort: 'F8', name: 'Cart'},
+            {id: 50, sort: 'F9', name: 'House'},
+            {id: 51, sort: 'F10', name: 'Hut'},
+            {id: 52, sort: 'F11', name: 'Stilt House'},
+            {id: 53, sort: 'F12', name: 'Tent'},
+            {id: 54, sort: 'F13', name: 'Campfire'},
+            {id: 55, sort: 'F14', name: 'Castle Tower'},
+            {id: 56, sort: 'F15', name: 'Outhouse'},
+            {id: 57, sort: 'F16', name: 'Cannon'},
+            {id: 58, sort: 'F17', name: 'Row Boat'},
+            {id: 59, sort: 'F18', name: 'Pavilion'},
+            {id: 60, sort: 'F19', name: 'Pagoda'},
+            {id: 61, sort: 'D13', name: 'Spikes'},
+            {id: 62, sort: 'F20', name: 'Gate'},
+            {id: 63, sort: 'F21', name: 'Obelisk'}
         ]
     }
 ] as ModelPack[];
