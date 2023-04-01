@@ -1,18 +1,10 @@
 # Intergalactic Planetary #
-Intergalactic Planetary is a collaborative NFT art project on the Terra blockchain which allows users to mint, trade, and edit a planet in an expansive galaxy.
+Intergalactic Planetary is a collaborative NFT art project on the Terra blockchain which allows users to mint, trade, and edit a planet in an expansive galaxy.  While the main deployment of the application is now closed, feel free to browse the source code or view the GitBook linked below.
 
-This repo contains the smart contract and *frontend code for the project and is freely available under MIT licensing.
-
-*Frontend code will be added to this repository at a later date.
+This repo contains the smart contract and frontend code for the project and is freely available under MIT licensing.
 
 # Important Links #
 
-Main Deployment - https://intergalacticplanetary.io
+GitBook - https://hodlfish.gitbook.io/intergalactic-planetary
 
-Twitter - https://twitter.com/IntergalacticPt
-
-Discord - https://discord.com/invite/JXekfYHjQY
-
-HODLFish Labs - https://twitter.com/hodlfishlabs
-
-Assets Bundle - https://drive.google.com/drive/u/4/folders/1-k_fBybtFHNf96qi_a0DJ8WoBAjfA6Tc
+Assets Bundle - https://drive.google.com/file/d/1VhgJ2E9JID4A8_PbFWljxtPlr1DkLkYM/view?usp=sharing
